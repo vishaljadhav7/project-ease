@@ -12,3 +12,107 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id               String     @id @default(uuid())
+  googleId         String     @unique
+  emailId          String     @unique
+  profileAvatarUrl String     @default("https://plus.unsplash.com/premium_photo-1683972509783-da5a74795bb3?q=80&w=1400")
+  password         String
+
+  createdTasks     Task[]    @relation("createdTasks")
+  assignedTasks    Task[]    @relation("assignedTasks")
+
+  teamId           String?
+  team             Team?     @relation(fields: [teamId], references: [id])
+
+  taskAssignments  TaskAssignments[]
+  uploadedFiles    uploadedFiles[]
+  userComments     UserComments[]  
+}
+
+model Team {
+   id               String     @id @default(uuid())
+   teamName         String
+   users             User[] 
+   projectTeams      ProjectTeam[]
+}
+
+model Project {
+   id               String     @id @default(uuid())
+   projectName      String
+   description      String?
+   startDate        DateTime?
+   endDate          DateTime?
+   tasks            Task[]     @relation("projectTask")
+   projectTeams      ProjectTeam[]   
+}
+
+
+model ProjectTeam {
+  id               String     @id @default(uuid())
+  
+  teamTd           String
+  team             Team       @relation(fields: [teamTd], references: [id])   
+
+  projectId        String
+  project          Project    @relation(fields: [projectId], references: [id])            
+}
+
+model Task {
+  id               String     @id @default(uuid())   
+  taskName         String
+  description      String?
+  status           String?
+  priority         String?
+  tags             String?
+  startDate        DateTime?
+  dueDate          DateTime?
+  points           Int?
+
+  createdById      String
+  createdTask      User        @relation("createdTasks", fields: [createdById], references: [id])
+  
+  assignedToId     String?
+  assignedTo       User?        @relation("assignedTasks", fields: [assignedToId], references: [id])
+
+  projectId        String
+  project          Project      @relation("projectTask", fields: [projectId], references: [id])
+
+  taskAssignments  TaskAssignments[]    
+  uploadedFiles    uploadedFiles[]
+  userComments     UserComments[]
+}
+
+model TaskAssignments { 
+  id               String     @id @default(uuid())
+  
+  userId           String
+  user             User       @relation(fields: [userId], references: [id])
+
+  taskId           String
+  task             Task       @relation(fields: [taskId], references: [id])    
+}
+
+model uploadedFiles {
+  id               String     @id @default(uuid())
+  fileUrl          String    
+  fileName         String
+
+  taskId           String
+  task             Task      @relation(fields: [taskId], references: [id]) 
+
+  uploadedById     String     
+  uploadedBy       User       @relation(fields: [uploadedById], references: [id])
+}
+
+model UserComments {
+  id               String       @id @default(uuid())
+  comment          String
+
+  commentById      String
+  commentBy        User         @relation(fields: [commentById], references: [id])
+
+  commentOnTaskId  String
+  commentOnTask    Task         @relation(fields: [commentOnTaskId], references: [id])      
+}
