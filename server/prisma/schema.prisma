@@ -15,10 +15,10 @@ datasource db {
 
 model User {
   id               String     @id @default(uuid())
-  googleId         String     @unique
+  userName         String     
   emailId          String     @unique
-  profileAvatarUrl String     @default("https://plus.unsplash.com/premium_photo-1683972509783-da5a74795bb3?q=80&w=1400")
   password         String
+  profileAvatarUrl String     @default("https://plus.unsplash.com/premium_photo-1683972509783-da5a74795bb3?q=80&w=1400")
 
   createdTasks     Task[]    @relation("createdTasks")
   assignedTasks    Task[]    @relation("assignedTasks")
@@ -63,8 +63,8 @@ model Task {
   id               String     @id @default(uuid())   
   taskName         String
   description      String?
-  status           String?
-  priority         String?
+  status           Status?
+  priority         Priority?
   tags             String?
   startDate        DateTime?
   dueDate          DateTime?
@@ -115,4 +115,19 @@ model UserComments {
 
   commentOnTaskId  String
   commentOnTask    Task         @relation(fields: [commentOnTaskId], references: [id])      
+}
+
+enum Priority {
+  Urgent  
+  High 
+  Medium 
+  Low 
+  Backlog
+}
+
+enum Status {
+  To_Do 
+  In_Progress 
+  Under_Review 
+  Completed 
 }

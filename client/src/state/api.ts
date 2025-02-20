@@ -1,13 +1,13 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface Project {
-  id: number;
-  name: string;
-  description?: string;
-  startDate?: string;
-  endDate?: string;
+  id: string;
+  projectName: string;
+  description?: string;  
+  startDate?: Date;
+  endDate?: Date; 
 }
-
+                             
 export enum Priority {
   Urgent = "Urgent",
   High = "High",
@@ -17,47 +17,54 @@ export enum Priority {
 }
 
 export enum Status {
-  ToDo = "To Do",
-  WorkInProgress = "Work In Progress",
-  UnderReview = "Under Review",
+  To_Do = "To_Do",
+  In_Progress = "In_Progress",
+  Under_Review = "Under_Review",
   Completed = "Completed",
 }
 
 export interface User {
-  userId?: number;
-  username: string;
-  email: string;
-  profilePictureUrl?: string;
-  cognitoId?: string;
-  teamId?: number;
+  id?: string;
+  userName : string;
+  emailId: string;
+  password: string;
+  profileAvatarUrl?: string;
+  teamId?: string;
 }
 
-export interface Attachment {
-  id: number;
-  fileURL: string;
+export interface uploadedFiles {
+  id: string;
+  fileUrl: string;
   fileName: string;
-  taskId: number;
-  uploadedById: number;
+  taskId: string;
+  uploadedById: string;
+}
+
+export interface UserComments{
+  id: string;
+  comment : string;
+  commentById : string;
+  commentOnTaskId : string;
 }
 
 export interface Task {
-  id: number;
-  title: string;
+  id: string;
+  taskName: string;
   description?: string;
   status?: Status;
   priority?: Priority;
   tags?: string;
-  startDate?: string;
-  dueDate?: string;
-  points?: number;
-  projectId: number;
-  authorUserId?: number;
-  assignedUserId?: number;
+  startDate?: Date;
+  dueDate?: Date;
+  points?: string;
+  projectId: string;
+  createdById?: string;
+  assignedToId?: string;
 
-  author?: User;
-  assignee?: User;
-  comments?: Comment[];
-  attachments?: Attachment[];
+  createdTask?: User;
+  assignedTo?: User;
+  userComments?: UserComments[];
+  attachments?: uploadedFiles[];
 }
 
 export interface SearchResults {
@@ -67,10 +74,10 @@ export interface SearchResults {
 }
 
 export interface Team {
-  teamId: number;
+  teamId: string;
   teamName: string;
-  productOwnerUserId?: number;
-  projectManagerUserId?: number;
+  // productOwnerUserId?: string;
+  // projectManagerUserId?: string;
 }
 
 export const api = createApi({
