@@ -13,7 +13,7 @@ const Sidebar = () =>  {
   const {isSidebarCollapsed} = useAppSelector((state : RootState) => state.global);
 
   return (
-    <div className={`fixed flex flex-col h-[100%] bg-slate-500 z-40 justify-between shadow-xl transition-all duration-100 overflow-y-auto ${isSidebarCollapsed ? "w-0" : "w-64"}  justify-start`}>
+    <div className={`fixed flex flex-col h-[100%]  z-40 justify-between shadow-xl transition-all duration-100 overflow-y-auto ${isSidebarCollapsed ? "w-0" : "w-64"}  justify-start`}>
      {/* {top logo} */}
      <div className="flex flex-col h-[100%] justify-start">
         <div className="z-50 min-h-[56px] w-full flex items-center justify-center bg-orange-300">
@@ -27,12 +27,12 @@ const Sidebar = () =>  {
         </div>
          {/* {team} */}        
          <div className="flex items-center gap-5 border-y-[1.5px] border-gray-200 px-8 py-4">
-            <Image src='/vercel.svg' width={40} height={40} alt="logo"/>
+            <Image src='/vercel.svg' width={40} height={40} alt="logo" className="bg-slate-800"/>
             <div >
               <h2 className="text-md font-semibold text-gray-800">Abc Team</h2>
               <div className="mt-1 flex items-center gap-2">
-                <LockIcon className="h-3 w-3 text-gray-300"/>
-                <p className="text-xs text-gray-300">private</p>
+                <LockIcon className="h-3 w-3 text-gray-600"/>
+                <p className="text-xs text-gray-600">private</p>
               </div>
             </div> 
          </div>

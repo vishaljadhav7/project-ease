@@ -1,26 +1,34 @@
+-- CreateEnum
+CREATE TYPE "Priority" AS ENUM ('Urgent', 'High', 'Medium', 'Low', 'Backlog');
+
+-- CreateEnum
+CREATE TYPE "Status" AS ENUM ('To_Do', 'In_Progress', 'Under_Review', 'Completed');
+
 -- CreateTable
 CREATE TABLE "User" (
-    "id" TEXT NOT NULL,
-    "googleId" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "userName" TEXT NOT NULL,
     "emailId" TEXT NOT NULL,
-    "profileAvatarUrl" TEXT NOT NULL DEFAULT 'https://plus.unsplash.com/premium_photo-1683972509783-da5a74795bb3?q=80&w=1400',
     "password" TEXT NOT NULL,
-    "teamId" TEXT,
+    "profileAvatarUrl" TEXT NOT NULL DEFAULT 'https://plus.unsplash.com/premium_photo-1683972509783-da5a74795bb3?q=80&w=1400',
+    "teamId" INTEGER,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Team" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "teamName" TEXT NOT NULL,
+    "productOwnerUserId" INTEGER,
+    "projectManagerUserId" INTEGER,
 
     CONSTRAINT "Team_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Project" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "projectName" TEXT NOT NULL,
     "description" TEXT,
     "startDate" TIMESTAMP(3),
@@ -31,63 +39,60 @@ CREATE TABLE "Project" (
 
 -- CreateTable
 CREATE TABLE "ProjectTeam" (
-    "id" TEXT NOT NULL,
-    "teamTd" TEXT NOT NULL,
-    "projectId" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "teamId" INTEGER NOT NULL,
+    "projectId" INTEGER NOT NULL,
 
     CONSTRAINT "ProjectTeam_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Task" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "taskName" TEXT NOT NULL,
     "description" TEXT,
-    "status" TEXT,
-    "priority" TEXT,
+    "status" "Status",
+    "priority" "Priority",
     "tags" TEXT,
     "startDate" TIMESTAMP(3),
     "dueDate" TIMESTAMP(3),
     "points" INTEGER,
-    "createdById" TEXT NOT NULL,
-    "assignedToId" TEXT,
-    "projectId" TEXT NOT NULL,
+    "createdById" INTEGER NOT NULL,
+    "assignedToId" INTEGER,
+    "projectId" INTEGER NOT NULL,
 
     CONSTRAINT "Task_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "TaskAssignments" (
-    "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "taskId" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "taskId" INTEGER NOT NULL,
 
     CONSTRAINT "TaskAssignments_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "uploadedFiles" (
-    "id" TEXT NOT NULL,
-    "fileUrl" TEXT NOT NULL,
+CREATE TABLE "UploadedFiles" (
+    "id" SERIAL NOT NULL,
+    "fileUrl" TEXT NOT NULL DEFAULT 'https://plus.unsplash.com/premium_photo-1677402408071-232d1c3c3787?q=80&w=1480',
     "fileName" TEXT NOT NULL,
-    "taskId" TEXT NOT NULL,
-    "uploadedById" TEXT NOT NULL,
+    "taskId" INTEGER NOT NULL,
+    "uploadedById" INTEGER NOT NULL,
 
-    CONSTRAINT "uploadedFiles_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "UploadedFiles_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "UserComments" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "comment" TEXT NOT NULL,
-    "commentById" TEXT NOT NULL,
-    "commentOnTaskId" TEXT NOT NULL,
+    "commentById" INTEGER NOT NULL,
+    "commentOnTaskId" INTEGER NOT NULL,
 
     CONSTRAINT "UserComments_pkey" PRIMARY KEY ("id")
 );
-
--- CreateIndex
-CREATE UNIQUE INDEX "User_googleId_key" ON "User"("googleId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_emailId_key" ON "User"("emailId");
@@ -96,7 +101,7 @@ CREATE UNIQUE INDEX "User_emailId_key" ON "User"("emailId");
 ALTER TABLE "User" ADD CONSTRAINT "User_teamId_fkey" FOREIGN KEY ("teamId") REFERENCES "Team"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ProjectTeam" ADD CONSTRAINT "ProjectTeam_teamTd_fkey" FOREIGN KEY ("teamTd") REFERENCES "Team"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ProjectTeam" ADD CONSTRAINT "ProjectTeam_teamId_fkey" FOREIGN KEY ("teamId") REFERENCES "Team"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ProjectTeam" ADD CONSTRAINT "ProjectTeam_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -117,10 +122,10 @@ ALTER TABLE "TaskAssignments" ADD CONSTRAINT "TaskAssignments_userId_fkey" FOREI
 ALTER TABLE "TaskAssignments" ADD CONSTRAINT "TaskAssignments_taskId_fkey" FOREIGN KEY ("taskId") REFERENCES "Task"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "uploadedFiles" ADD CONSTRAINT "uploadedFiles_taskId_fkey" FOREIGN KEY ("taskId") REFERENCES "Task"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "UploadedFiles" ADD CONSTRAINT "UploadedFiles_taskId_fkey" FOREIGN KEY ("taskId") REFERENCES "Task"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "uploadedFiles" ADD CONSTRAINT "uploadedFiles_uploadedById_fkey" FOREIGN KEY ("uploadedById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "UploadedFiles" ADD CONSTRAINT "UploadedFiles_uploadedById_fkey" FOREIGN KEY ("uploadedById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "UserComments" ADD CONSTRAINT "UserComments_commentById_fkey" FOREIGN KEY ("commentById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

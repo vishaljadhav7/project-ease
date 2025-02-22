@@ -19,7 +19,7 @@ userRouter.post("/signup",
     body('userName').isString().isLength({min:3}).withMessage("googleId is required"),
     body('emailId').isEmail().withMessage('email is required'),
     body('password').isStrongPassword().withMessage('strong password is required'),
-    body('profileAvatarUrl').isURL().withMessage('profile avatar url is required'),
+    body('profileAvatarUrl').isURL().withMessage('profile avatar url is required').optional(),
     body('teamId').isUUID().withMessage("team id is required").optional()
   ],
   registerUser

@@ -2,8 +2,6 @@
 
 import Navbar from '@/components/Navbar/index';
 import Sidebar from '@/components/Sidebar';
-import StoreProvider from '@/app/redux';
-import Router from 'next/router';
 
 const DashboardLayout = ({children} : {children : React.ReactNode}) => {
 
@@ -12,23 +10,12 @@ const DashboardLayout = ({children} : {children : React.ReactNode}) => {
       <Sidebar/>
      <main className={`w-full flex flex-col `}>
          <Navbar/>
-        {children}
+         {children}
      </main> 
     </div>
   )
 }
 
 
-const DashboardWrapper = ({children} : {children : React.ReactNode}) => {
-    
-  return (
-   <StoreProvider>
-     <DashboardLayout> 
-       { children}
-     </DashboardLayout>
-   </StoreProvider> 
-  )
-}
 
-
-export default DashboardWrapper;
+export default DashboardLayout;

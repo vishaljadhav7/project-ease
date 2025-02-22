@@ -6,9 +6,7 @@ const projectRouter = Router();
 
 projectRouter.get("/", fetchAllProjects);
 
-
-//   const { projectName, description, startDate, endDate } = req.body;
-projectRouter.post("/",  
+projectRouter.post("/create-project",  
     [
       body('projectName').isString().isLength({min : 3}).withMessage('project name must be at least 3 characters long'),
       body('description').isString().isLength({min : 6}).withMessage('description must be more than 6 characters').optional(),

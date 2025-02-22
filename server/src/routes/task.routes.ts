@@ -22,7 +22,7 @@ const Status = {
   Completed : "Completed",
 }
 
-taskRouter.post("/", [
+taskRouter.post("/create-task", [
  body('taskName').isString().isLength({min : 3}).withMessage("task name must be at least 3 characters long"),
  body('description').isString().isLength({min : 6}).withMessage("task name must be at least 6 characters long"),
  body('status').isIn(Object.values(Status)).withMessage("invalid status"),

@@ -1,0 +1,152 @@
+[
+  {
+    "id": 1,
+    "comment": "We need to update this design to include new specifications.",
+    "commentOnTaskId": 1,
+    "commentById": 2
+  },
+  {
+    "id": 2,
+    "comment": "Can we meet to discuss the navigation algorithm updates?",
+    "commentOnTaskId": 2,
+    "commentById": 4
+  },
+  {
+    "id": 3,
+    "comment": "This energy solution looks promising, but needs more research.",
+    "commentOnTaskId": 3,
+    "commentById": 6
+  },
+  {
+    "id": 4,
+    "comment": "Let's revise the software development workflow to include agile methodologies.",
+    "commentOnTaskId": 4,
+    "commentById": 8
+  },
+  {
+    "id": 5,
+    "comment": "We should consider newer AI models for better accuracy.",
+    "commentOnTaskId": 5,
+    "commentById": 10
+  },
+  {
+    "id": 6,
+    "comment": "Product testing needs to be more rigorous.",
+    "commentOnTaskId": 6,
+    "commentById": 12
+  },
+  {
+    "id": 7,
+    "comment": "Optimization algorithms are not yet efficient.",
+    "commentOnTaskId": 7,
+    "commentById": 14
+  },
+  {
+    "id": 8,
+    "comment": "Database overhaul could impact current operations negatively.",
+    "commentOnTaskId": 8,
+    "commentById": 16
+  },
+  {
+    "id": 9,
+    "comment": "Infrastructure upgrades must be done during low traffic hours.",
+    "commentOnTaskId": 9,
+    "commentById": 18
+  },
+  {
+    "id": 10,
+    "comment": "Security measures need to be enhanced to prevent data breaches.",
+    "commentOnTaskId": 10,
+    "commentById": 20
+  },
+  {
+    "id": 11,
+    "comment": "Consider using more robust training datasets for AI.",
+    "commentOnTaskId": 11,
+    "commentById": 1
+  },
+  {
+    "id": 12,
+    "comment": "Server security update meeting scheduled for next week.",
+    "commentOnTaskId": 12,
+    "commentById": 2
+  },
+  {
+    "id": 13,
+    "comment": "UX redesign has been well received in initial user tests.",
+    "commentOnTaskId": 13,
+    "commentById": 3
+  },
+  {
+    "id": 14,
+    "comment": "Data analytics implementation needs to account for real-time processing delays.",
+    "commentOnTaskId": 14,
+    "commentById": 4
+  },
+  {
+    "id": 15,
+    "comment": "Encryption project needs to align with international security standards.",
+    "commentOnTaskId": 15,
+    "commentById": 5
+  },
+  {
+    "id": 16,
+    "comment": "Review cloud storage optimization strategies in Q3 meeting.",
+    "commentOnTaskId": 16,
+    "commentById": 6
+  },
+  {
+    "id": 17,
+    "comment": "Hardware compatibility tests to include newer device models.",
+    "commentOnTaskId": 17,
+    "commentById": 7
+  },
+  {
+    "id": 18,
+    "comment": "Visualization tools to support both 2D and 3D data representations.",
+    "commentOnTaskId": 18,
+    "commentById": 8
+  },
+  {
+    "id": 19,
+    "comment": "IoT device prototypes to undergo extensive field testing.",
+    "commentOnTaskId": 19,
+    "commentById": 9
+  },
+  {
+    "id": 20,
+    "comment": "Legacy system upgrade to start with backend databases.",
+    "commentOnTaskId": 20,
+    "commentById": 10
+  },
+  {
+    "id": 21,
+    "comment": "Network security framework should prioritize threat detection improvements.",
+    "commentOnTaskId": 21,
+    "commentById": 1
+  },
+  {
+    "id": 22,
+    "comment": "Application deployment strategies to include Docker integration.",
+    "commentOnTaskId": 22,
+    "commentById": 2
+  },
+  {
+    "id": 23,
+    "comment": "Market analysis should cover competitive product landscapes.",
+    "commentOnTaskId": 23,
+    "commentById": 3
+  },
+  {
+    "id": 24,
+    "comment": "Feedback mechanisms to utilize adaptive questioning techniques.",
+    "commentOnTaskId": 24,
+    "commentById": 4
+  },
+  {
+    "id": 25,
+    "comment": "API integration must ensure data privacy compliance.",
+    "commentOnTaskId": 25,
+    "commentById": 5
+  }
+]
