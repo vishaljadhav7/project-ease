@@ -8,7 +8,7 @@ import ApiError from "../utils/ApiError";
 
 const prisma = new PrismaClient();
 
-function generateJWT (id : string) {
+function generateJWT (id : number) {
   const secretKey = process.env.SECRET_KEY;
   
   if (!secretKey) {
@@ -20,14 +20,14 @@ function generateJWT (id : string) {
   });
 }
 
-interface FetchUserParams {userId: string;}
+interface FetchUserParams {userId: number;}
 
 interface RegisterUserBody {
-    emailId: string;
+    emailId: number;
     password: string;
     userName: string;
     profileAvatarUrl: string;
-    teamId?: string;
+    teamId?: number;
 }  
 
 const options = {
@@ -50,12 +50,13 @@ export const fetchAllUsers = async (req : Request, res : Response) : Promise<voi
 }
 
 
-export const fetchUser = async (req : Request<FetchUserParams>, res : Response) : Promise<void> => {
+export const fetchUser = async (req : Request<FetchUserParams>, res : Response) => {
+
     try {
-      const userId = req.params.userId
+      const userId = req.params?.userId
       const user = await prisma.user.findUnique({
         where : {
-          id : userId
+          id : Number(userId)
         }
       })
 
@@ -64,16 +65,17 @@ export const fetchUser = async (req : Request<FetchUserParams>, res : Response) 
       }
 
       const resData = {
-        id : user.id,
-        emailId : user.emailId,
-        userName : user.userName,
-        profileAvatarUrl : user.profileAvatarUrl,
+        id : user?.id ,
+        emailId : user?.emailId ,
+        userName : user.userName  ,
+        profileAvatarUrl : user?.profileAvatarUrl, 
         teamId : user?.teamId 
       } 
       
-      res.status(201).json(new ApiResponse(201, resData, "user retrieved successfully"))
+      res.status(201).json(new ApiResponse(201, {}, "user retrieved successfully"))
 
     } catch (error : any) {
+      console.log("error.message ->>>>> ",error.message, "     " , error)
       const statusCode = error instanceof ApiError ? error.statusCode : 500;
       const message = error instanceof ApiError ? error.message : `Server error: ${error.message}`;
       res.status(statusCode).json(new ApiError(statusCode, message));
@@ -113,7 +115,7 @@ export const registerUser = async (req : Request<{}, {}, RegisterUserBody>, res 
     }
 }
 
-export const signInUser = async (req : Request<{}, {}, {emailId : string, password : string}> , res : Response) : Promise<void> => {
+export const signInUser = async (req : Request<{}, {}, {emailId : number, password : string}> , res : Response) : Promise<void> => {
   try {
     const {emailId , password} = req.body
     const userExist = await prisma.user.findUnique({where : {emailId : emailId}})

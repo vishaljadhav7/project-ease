@@ -9,7 +9,7 @@ userRouter.get("/users", fetchAllUsers);
 
 userRouter.get("/user/:userId", 
   [
-    param('userId').isLength({min:1}).withMessage("userId required")
+    param('userId').isNumeric().isLength({min:1}).withMessage("userId required")
   ],
 fetchUser
 );

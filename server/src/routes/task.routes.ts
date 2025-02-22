@@ -47,7 +47,7 @@ taskRouter.patch("/:taskId/status",
 );
 
 
-taskRouter.get("/user/:userId", 
+taskRouter.get("/task/:userId", 
     [
        param('userId').isLength({min:1}).withMessage("user id required"), 
     ],

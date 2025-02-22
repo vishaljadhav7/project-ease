@@ -4,8 +4,8 @@ import { fetchAllProjects, createProject } from "../controllers/project.controll
 
 const projectRouter = Router();
 
-projectRouter.get("/", fetchAllProjects);
-
+projectRouter.get("/projects", fetchAllProjects);
+  
 projectRouter.post("/create-project",  
     [
       body('projectName').isString().isLength({min : 3}).withMessage('project name must be at least 3 characters long'),

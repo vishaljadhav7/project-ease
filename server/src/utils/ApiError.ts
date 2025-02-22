@@ -6,7 +6,7 @@ class ApiError extends Error {
     ) {
       super(message);
       this.name = 'ApiError'; 
-      Object.setPrototypeOf(this, ApiError.prototype); \
+      Object.setPrototypeOf(this, ApiError.prototype);
     }
   }
 

@@ -49,7 +49,7 @@ export const fetchAllTasks =  async (req: Request<{},{},{}, projectRef>, res: Re
     const {projectId} = req.query;
 
     const projectExist  = await prisma.project.findUnique({ 
-      where : { id : projectId},
+      where : { id : Number(projectId)},
       include : {tasks : true} 
     })
     if(!projectExist){
@@ -71,7 +71,7 @@ export const createTask = async (req: Request<{}, {}, taskRequirements>, res: Re
      const taskDetails = req.body;
      const {projectId, createdById, assignedToId} = taskDetails;
      
-     const projectExist  = await prisma.project.findUnique({ where : { id : projectId} })
+     const projectExist  = await prisma.project.findUnique({ where : { id : Number(projectId)} })
      if(!projectExist){
       throw new Error("projectId does not exist !");
      }
@@ -79,7 +79,7 @@ export const createTask = async (req: Request<{}, {}, taskRequirements>, res: Re
      const usersIdExist = await prisma.user.findMany({
       where : {
         id : {
-          in : [createdById, assignedToId]
+          in : [Number(createdById), Number(assignedToId)]
         }
       },
       select: {
@@ -124,10 +124,10 @@ export const modifyTaskStatus = async (req: Request<{taskId : number}, {}>, res:
 
      const taskExist = await prisma.task.update({
        where : {
-        id : taskId,
+        id : Number(taskId),
        },
         data : {
-        status : status,
+        status : status ,
        },
      });
 
@@ -151,8 +151,9 @@ export const fetchUserTasks = async (
   ): Promise<void> => {
     try {
        const {userId} = req.params;
-       const userExist = await prisma.user.findUnique({where : {id : userId}});
 
+       const userExist = await prisma.user.findUnique({where : {id : Number(userId)}});
+       
        if(!userExist){
         throw new Error("user not found for tasks to fetch!")
        }
@@ -160,8 +161,8 @@ export const fetchUserTasks = async (
        const allTasks = await prisma.task.findMany({
         where : {
             OR : [
-              {createdById : userId},
-              {assignedToId : userId},
+              {createdById : Number(userId)},
+              {assignedToId : Number(userId)},
             ]
         },
         include : {

@@ -6,11 +6,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
+const helmet_1 = __importDefault(require("helmet"));
+const user_routes_1 = __importDefault(require("./routes/user.routes"));
+const project_routes_1 = __importDefault(require("./routes/project.routes"));
 const morgan_1 = __importDefault(require("morgan"));
+const task_routes_1 = __importDefault(require("./routes/task.routes"));
 const app = (0, express_1.default)();
 exports.app = app;
 app.use(express_1.default.json());
-app.use(express_1.default.urlencoded({ extended: false }));
+app.use((0, helmet_1.default)());
+app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cors_1.default)({
     origin: '*',
     methods: ["GET", "POST"]
@@ -19,3 +24,6 @@ app.use((0, morgan_1.default)("common"));
 app.get("/", (req, res) => {
     res.send("This is home route");
 });
+app.use("/api/v1", user_routes_1.default);
+app.use("/api/v1", project_routes_1.default);
+app.use("/api/v1", task_routes_1.default);
