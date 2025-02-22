@@ -9,7 +9,7 @@ userRouter.get("/users", fetchAllUsers);
 
 userRouter.get("/user/:userId", 
   [
-    param('userId').isUUID().withMessage("userId is required")
+    param('userId').isLength({min:1}).withMessage("userId required")
   ],
 fetchUser
 );
@@ -20,7 +20,7 @@ userRouter.post("/signup",
     body('emailId').isEmail().withMessage('email is required'),
     body('password').isStrongPassword().withMessage('strong password is required'),
     body('profileAvatarUrl').isURL().withMessage('profile avatar url is required').optional(),
-    body('teamId').isUUID().withMessage("team id is required").optional()
+    body('teamId').isLength({min:1}).withMessage("team id is required").optional()
   ],
   registerUser
 );

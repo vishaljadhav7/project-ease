@@ -27,20 +27,20 @@ taskRouter.post("/create-task", [
  body('description').isString().isLength({min : 6}).withMessage("task name must be at least 6 characters long"),
  body('status').isIn(Object.values(Status)).withMessage("invalid status"),
  body('priority').isIn(Object.values(Priority)).withMessage("invalid status"),
- body('tags').isString().optional(),
+ body('tags').isLength({min:3}).isString().optional(),
  body('startDate').isDate().withMessage('start date is required'),
  body('dueDate').isDate().withMessage('due Date is required'),
  body('points').isNumeric().optional(),
- body('projectId').isUUID().withMessage("project id required"),
- body('createdById').isUUID().withMessage("createdBy id required"),
- body('assignedToId').isUUID().withMessage("assignedTo id required")
+ body('projectId').isLength({min:1}).withMessage("project id required"),
+ body('createdById').isLength({min:1}).withMessage("createdBy id required"),
+ body('assignedToId').isLength({min:1}).withMessage("assignedTo id required")
 ] , 
 createTask
 );
 
 taskRouter.patch("/:taskId/status", 
     [
-      param('taskId').isUUID().withMessage("task id required"),
+      param('taskId').isLength({min:1}).withMessage("task id required"),
       body('status').isIn(Object.values(Status)).withMessage("invalid status"), 
     ],
     modifyTaskStatus
@@ -49,7 +49,7 @@ taskRouter.patch("/:taskId/status",
 
 taskRouter.get("/user/:userId", 
     [
-       param('userId').isUUID().withMessage("user id required"), 
+       param('userId').isLength({min:1}).withMessage("user id required"), 
     ],
     fetchUserTasks
 );

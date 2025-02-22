@@ -6,7 +6,7 @@ import ApiError from "../utils/ApiError";
 const prisma = new PrismaClient();
 
 interface projectRef {
-    projectId : string
+    projectId : number
 }
 
 enum Priority {
@@ -34,9 +34,9 @@ interface taskRequirements {
     startDate : Date;
     dueDate : Date;
     points? : number;
-    projectId : string;
-    createdById: string;
-    assignedToId : string;
+    projectId : number;
+    createdById: number;
+    assignedToId : number;
 }
 
 interface taskStatus {
@@ -117,7 +117,7 @@ export const createTask = async (req: Request<{}, {}, taskRequirements>, res: Re
   }
   
 
-export const modifyTaskStatus = async (req: Request<{taskId : string}, {}>, res: Response): Promise<void> => {
+export const modifyTaskStatus = async (req: Request<{taskId : number}, {}>, res: Response): Promise<void> => {
     try {
      const { taskId } = req.params;
      const {status} = req.body;
@@ -146,7 +146,7 @@ export const modifyTaskStatus = async (req: Request<{taskId : string}, {}>, res:
 }
 
 export const fetchUserTasks = async (
-    req: Request<{userId : string}>,
+    req: Request<{userId : number}>,
     res: Response
   ): Promise<void> => {
     try {
