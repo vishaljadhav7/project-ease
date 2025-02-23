@@ -1,10 +1,13 @@
+'use client';
+
 import Image from "next/image";
-import { LockIcon, LucideIcon } from "lucide-react";
+import { useState } from "react";
+
 import { usePathname } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/app/redux";
 import { RootState } from "@/app/redux";
 import Link from "next/link";
-import { Home, XIcon, Briefcase, Search, Settings, User, Users} from "lucide-react";
+import {AlertCircle,AlertOctagon,AlertTriangle,Briefcase,ChevronDown,ChevronUp,Home,Layers3,LockIcon,LucideIcon,Search,Settings,ShieldAlert,User,Users,XIcon} from "lucide-react";
 import { toggleSidebarView } from "@/state";
 
 const Sidebar = () =>  {
@@ -12,8 +15,11 @@ const Sidebar = () =>  {
   const dispatch = useAppDispatch();
   const {isSidebarCollapsed} = useAppSelector((state : RootState) => state.global);
 
+  const [showProjects, setShowProjects] = useState(true);
+  const [showPriority, setShowPriority] = useState(true);
+
   return (
-    <div className={`fixed flex flex-col h-[100%]  z-40 justify-between shadow-xl transition-all duration-100 overflow-y-auto ${isSidebarCollapsed ? "w-0" : "w-64"}  justify-start`}>
+    <div className={`fixed flex flex-col h-[100%] bg-white z-40 justify-between shadow-xl transition-all duration-100 overflow-y-auto ${isSidebarCollapsed ? "w-0" : "w-64"}  justify-start`}>
      {/* {top logo} */}
      <div className="flex flex-col h-[100%] justify-start">
         <div className="z-50 min-h-[56px] w-full flex items-center justify-center bg-orange-300">
@@ -46,6 +52,57 @@ const Sidebar = () =>  {
              <SidePanelLinks icon={User} label="User" href="/user" />
              <SidePanelLinks icon={Users} label="Users" href="/users" />
          </div>
+
+         <button
+          onClick={() => setShowProjects((prev) => !prev)}
+          className="flex w-full items-center justify-between px-8 py-3 text-gray-500"
+        >
+          <span className="">Projects</span>
+          {showProjects ? (
+            <ChevronUp className="h-5 w-5" />
+          ) : (
+            <ChevronDown className="h-5 w-5" />
+          )}
+        </button>
+
+
+        <button
+          onClick={() => setShowPriority((prev) => !prev)}
+          className="flex w-full items-center justify-between px-8 py-3 text-gray-500"
+        >
+          <span className="">Priority</span>
+          {showPriority ? (
+            <ChevronUp className="h-5 w-5" />
+          ) : (
+            <ChevronDown className="h-5 w-5" />
+          )}
+        </button>
+
+        {showPriority && (
+          <>
+            <SidePanelLinks
+              icon={AlertCircle}
+              label="Urgent"
+              href="/priority/urgent"
+            />
+            <SidePanelLinks
+              icon={ShieldAlert}
+              label="High"
+              href="/priority/high"
+            />
+            <SidePanelLinks
+              icon={AlertTriangle}
+              label="Medium"
+              href="/priority/medium"
+            />
+            <SidePanelLinks icon={AlertOctagon} label="Low" href="/priority/low" />
+            <SidePanelLinks
+              icon={Layers3}
+              label="Backlog"
+              href="/priority/backlog"
+            />
+          </>
+        )}
      </div>    
     </div>
   )

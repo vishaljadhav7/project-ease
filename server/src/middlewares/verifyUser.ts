@@ -1,27 +1,59 @@
-// import { Request, Response,  NextFunction } from "express"
-// import { PrismaClient } from "@prisma/client";
-// import bcrypt from 'bcrypt';
-// import jwt, { JwtHeader, JwtPayload } from "jsonwebtoken";
+import { Request, Response,  NextFunction } from "express"
+import { PrismaClient } from "@prisma/client";
+import bcrypt from 'bcrypt';
+import jwt, { JwtHeader, JwtPayload } from "jsonwebtoken";
 
-// const prisma = new PrismaClient()
-
-// const verifyUser = async (req : Request, res : Response, next : NextFunction) => {
-//   const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
-
-//   if(!token){
-//     return res.status(401).json({
-//         success: false,
-//         message: 'Token not provided in cookies or headers',
-//       });
-//   }
-
-//   try {
-//     const decodedMsg : {userId : string | JwtPayload} = jwt.verify(token, process.env.SECRET_KEY!);
-//     const userId = decodedMsg?.userId ;
-//     const userExist = await  prisma.user.findUnique({where : {id : userId}});
+const prisma = new PrismaClient()
 
 
-//   } catch (error) {
+
+// Define the User interface for the decoded token
+interface User {
+    id: string;
+}
+
+// Extend the Express Request interface to include user property
+declare module 'express' {
+    export interface Request {
+        user?: User;
+    }
+}
+
+
+async function authMiddleWare(req: Request, res: Response, next: NextFunction) {
+    // Get the authorization header
+    const authHeader = req.headers['authorization'] || req.cookies.token;
     
-//   }
-// }
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).send('Unauthorized');
+    }
+    
+    // Extract the token
+    const token = authHeader.split(' ')[1]
+    if (!token) {
+        return res.status(401).send('No token provided');
+    }
+    
+    try {
+        const decoded = jwt.verify(token, process.env.SECRET_KEY!);
+        
+        if (typeof decoded === 'object' && 'id' in decoded) {  
+            const userInfo = await prisma.user.findUnique({where : { id : decoded.id}})
+            if(!userInfo) throw new Error("not a vaild token!")
+                
+            req.user = decoded as User;
+            next();
+        } else {
+            return res.status(401).send('Invalid token');
+        }
+    } catch (error : any) {
+
+         console.error('Token Verification Middleware Error:', error.message);
+         return res.status(500).json({
+          success: false,
+          message: 'Internal Server Error: ' + error.message,
+        });
+    }
+}
+
+export default authMiddleWare;

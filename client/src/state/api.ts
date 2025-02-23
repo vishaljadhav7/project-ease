@@ -1,7 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { url } from "inspector";
 
 export interface Project {
-  id: string;
+  id: number;
   projectName: string;
   description?: string;  
   startDate?: Date;
@@ -24,31 +25,31 @@ export enum Status {
 }
 
 export interface User {
-  id?: string;
+  id?: number;
   userName : string;
   emailId: string;
   password: string;
   profileAvatarUrl?: string;
-  teamId?: string;
+  teamId?: number;
 }
 
 export interface uploadedFiles {
-  id: string;
+  id: number;
   fileUrl: string;
   fileName: string;
-  taskId: string;
-  uploadedById: string;
+  taskId: number;
+  uploadedById: number;
 }
 
 export interface UserComments{
-  id: string;
+  id: number;
   comment : string;
-  commentById : string;
-  commentOnTaskId : string;
+  commentById : number;
+  commentOnTaskId : number;
 }
 
 export interface Task {
-  id: string;
+  id: number;
   taskName: string;
   description?: string;
   status?: Status;
@@ -57,9 +58,9 @@ export interface Task {
   startDate?: Date;
   dueDate?: Date;
   points?: string;
-  projectId: string;
-  createdById?: string;
-  assignedToId?: string;
+  projectId: number;
+  createdById?: number;
+  assignedToId?: number;
 
   createdTask?: User;
   assignedTo?: User;
@@ -74,17 +75,80 @@ export interface SearchResults {
 }
 
 export interface Team {
-  teamId: string;
+  teamId: number;
   teamName: string;
-  // productOwnerUserId?: string;
-  // projectManagerUserId?: string;
+  productOwnerUserId?: number;
+  projectManagerUserId?: number;
 }
 
 export const api = createApi({
     baseQuery : fetchBaseQuery({baseUrl : process.env.NEXT_PUBLIC_API_BASE_URL}),
     reducerPath : "api",
-    tagTypes : [],
-    endpoints : (build) => ({}),
+    tagTypes : ["Projects", "Tasks"],
+    endpoints : (build) => ({
+      fetchAllProjects : build.query<Project[], void>({
+        query : () => "/projects",
+        providesTags : ["Projects"]
+      }),
+      createProject : build.mutation<Project, Partial<Project>>({
+        query : (project) => ({
+          url : "/create-project",
+          method : "POST",
+          body : project
+        })
+      }),
+      fetchAllTasks : build.query<Task[], {projectId : number}>({
+        query : ({projectId}) => `tasks?projectId=${projectId}`,
+        providesTags : (result) => result ? 
+        result.map(({id}) => ({type : "Tasks" as const, id})) : [{type : "Tasks" as const}]
+      }),
+      createTask : build.mutation<Task, Partial<Task>>({
+        query : (task) => ({
+         url : "/create-task",
+        method : "POST",
+        body : task
+       }),
+       invalidatesTags : ["Tasks"], 
+      }),
+      updateTask : build.mutation<Task, {taskId : number, status : string}>({
+        query : ({taskId, status}) => ({
+          url : `/task/${taskId}/status`,
+          method : "PATCH",
+          body : {status} 
+        }),
+         invalidatesTags : (results, error, {taskId}) => [
+           {type : "Tasks", id : taskId} 
+         ],
+      }),
+      fetchAllTasksOfUser : build.query<Task[], {userId: number}>({
+        query : ({userId}) => `/tasks/user/${userId}`,
+        // providesTags : (result, error, userId) =>
+        //   result
+        //     ? result.map(({ id }) => ({ type: "Tasks", id }))
+        //     : [{ type: "Tasks", id: userId }], 
+      }),
+      getUsers: build.query<User[], void>({
+        query: () => "users",
+        // providesTags: ["Users"] ,
+      }),
+      getTeams: build.query<Team[], void>({
+        query: () => "teams",
+        // providesTags: ["Teams"],
+      }),
+      search: build.query<SearchResults, string>({
+        query: (query) => `search?query=${query}`,
+      }),
+    }),
 })
 
-export const { } = api
+export const { 
+  useFetchAllProjectsQuery , 
+  useCreateTaskMutation, 
+  useCreateProjectMutation, 
+  useFetchAllTasksQuery,
+  useUpdateTaskMutation,
+  useFetchAllTasksOfUserQuery,
+  useGetTeamsQuery,
+  useGetUsersQuery,
+  useSearchQuery
+} = api

@@ -4,23 +4,23 @@ import { createTask, fetchAllTasks, fetchUserTasks, modifyTaskStatus } from "../
 
 const taskRouter = Router();
 
-taskRouter.get("/", fetchAllTasks);
-
-
- const Priority = {
-  Urgent : "Urgent",
-  High : "High",
-  Medium : "Medium",
-  Low : "Low",
-  Backlog : "Backlog",
+const Priority = {
+ Urgent : "Urgent",
+ High : "High",
+ Medium : "Medium",
+ Low : "Low",
+ Backlog : "Backlog",
 }
 
 const Status = {
-  To_Do : "To_Do",
-  In_Progress : "In_Progress",
-  Under_Review : "Under_Review",
-  Completed : "Completed",
+ To_Do : "To_Do",
+ In_Progress : "In_Progress",
+ Under_Review : "Under_Review",
+ Completed : "Completed",
 }
+
+taskRouter.get("/tasks", fetchAllTasks);
+
 
 taskRouter.post("/create-task", [
  body('taskName').isString().isLength({min : 3}).withMessage("task name must be at least 3 characters long"),
@@ -38,7 +38,7 @@ taskRouter.post("/create-task", [
 createTask
 );
 
-taskRouter.patch("/:taskId/status", 
+taskRouter.patch("/task/:taskId/status", 
     [
       param('taskId').isLength({min:1}).withMessage("task id required"),
       body('status').isIn(Object.values(Status)).withMessage("invalid status"), 
@@ -47,7 +47,7 @@ taskRouter.patch("/:taskId/status",
 );
 
 
-taskRouter.get("/task/:userId", 
+taskRouter.get("/tasks/user/:userId", 
     [
        param('userId').isLength({min:1}).withMessage("user id required"), 
     ],
