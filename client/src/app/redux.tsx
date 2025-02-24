@@ -8,9 +8,10 @@ import {
   useSelector,
   Provider,
 } from "react-redux";
-import globalReducer from "@/state/index";
+import globalReducer from "@/state/features/statusSlice/index";
 import { api } from "@/state/api"; 
 import { setupListeners } from "@reduxjs/toolkit/query";
+import dataReducer from '@/state/features/dataSlice/index'
 
 import {
   FLUSH,
@@ -23,6 +24,7 @@ import {
 
 const rootReducer = combineReducers({
   global: globalReducer,
+  data : dataReducer,
   [api.reducerPath]: api.reducer,
 });
 

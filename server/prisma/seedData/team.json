@@ -1,7 +1,32 @@
 [
-    {"id":1,"teamName":"Team A","productOwnerUserId":1,"projectManagerUserId":2},
-    {"id":2,"teamName":"Team B","productOwnerUserId":4,"projectManagerUserId":5},
-    {"id":3,"teamName":"Team C","productOwnerUserId":7,"projectManagerUserId":8},
-    {"id":4,"teamName":"Team D","productOwnerUserId":9,"projectManagerUserId":10},
-    {"id":5,"teamName":"Team E","productOwnerUserId":1,"projectManagerUserId":3}
-  ]   
+  {
+    "id": 1,
+    "teamName": "Alpha Innovators",
+    "productOwnerUserId": 1,
+    "projectManagerUserId": 2
+  },
+  {
+    "id": 2,
+    "teamName": "Beta Pioneers",
+    "productOwnerUserId": 4,
+    "projectManagerUserId": 5
+  },
+  {
+    "id": 3,
+    "teamName": "Gamma Trailblazers",
+    "productOwnerUserId": 7,
+    "projectManagerUserId": 8
+  },
+  {
+    "id": 4,
+    "teamName": "Delta Visionaries",
+    "productOwnerUserId": 9,
+    "projectManagerUserId": 10
+  },
+  {
+    "id": 5,
+    "teamName": "Epsilon Creators",
+    "productOwnerUserId": 1,
+    "projectManagerUserId": 3
+  }
+]

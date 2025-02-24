@@ -1,7 +1,72 @@
 [
-    {"id":1,"taskName":"Task 1 of Project 1","description":"Some description","status":"In_Progress","priority":"Urgent","tags":"Design","startDate":"2023-01-10T00:00:00Z","dueDate":"2023-04-10T00:00:00Z","points":10,"createdById":1,"assignedToId":2,"projectId":1},
-    {"id":2,"taskName":"Task 2 of Project 1","description":"Another description","status":"To_Do","priority":"High","tags":"Coding","startDate":"2023-01-15T00:00:00Z","dueDate":"2023-05-15T00:00:00Z","points":8,"createdById":3,"assignedToId":4,"projectId":1},
-    {"id":3,"taskName":"Task 3 of Project 1","description":"Third description","status":"In_Progress","priority":"Urgent","tags":"Development","startDate":"2023-03-20T00:00:00Z","dueDate":"2023-09-20T00:00:00Z","points":12,"createdById":5,"assignedToId":6,"projectId":1},
-    {"id":4,"taskName":"Task 4 of Project 1","description":"Fourth description","status":"To_Do","priority":"High","tags":"Planning","startDate":"2023-01-25T00:00:00Z","dueDate":"2023-06-25T00:00:00Z","points":15,"createdById":1,"assignedToId":3,"projectId":1},
-    {"id":5,"taskName":"Task 5 of Project 1","description":"Fifth description","status":"In_Progress","priority":"Urgent","tags":"Research","startDate":"2023-04-20T00:00:00Z","dueDate":"2023-10-20T00:00:00Z","points":9,"createdById":4,"assignedToId":5,"projectId":1}
-  ]
+  {
+    "id": 1,
+    "taskName": "UI Redesign for Project 1",
+    "description": "Revamp user interface to enhance accessibility and visual appeal",
+    "status": "In_Progress",
+    "priority": "Urgent",
+    "tags": "Design",
+    "startDate": "2023-01-10T00:00:00Z",
+    "dueDate": "2023-04-10T00:00:00Z",
+    "points": 10,
+    "createdById": 1,
+    "assignedToId": 2,
+    "projectId": 1
+  },
+  {
+    "id": 2,
+    "taskName": "API Integration for Project 1",
+    "description": "Develop and integrate APIs to improve system functionality",
+    "status": "To_Do",
+    "priority": "High",
+    "tags": "Coding",
+    "startDate": "2023-01-15T00:00:00Z",
+    "dueDate": "2023-05-15T00:00:00Z",
+    "points": 8,
+    "createdById": 3,
+    "assignedToId": 4,
+    "projectId": 1
+  },
+  {
+    "id": 3,
+    "taskName": "Database Optimization for Project 1",
+    "description": "Enhance database performance by optimizing queries and structure",
+    "status": "In_Progress",
+    "priority": "Urgent",
+    "tags": "Development",
+    "startDate": "2023-03-20T00:00:00Z",
+    "dueDate": "2023-09-20T00:00:00Z",
+    "points": 12,
+    "createdById": 5,
+    "assignedToId": 6,
+    "projectId": 1
+  },
+  {
+    "id": 4,
+    "taskName": "Timeline Planning for Project 1",
+    "description": "Create detailed project timeline to ensure timely milestone delivery",
+    "status": "To_Do",
+    "priority": "High",
+    "tags": "Planning",
+    "startDate": "2023-01-25T00:00:00Z",
+    "dueDate": "2023-06-25T00:00:00Z",
+    "points": 15,
+    "createdById": 1,
+    "assignedToId": 3,
+    "projectId": 1
+  },
+  {
+    "id": 5,
+    "taskName": "Market Analysis for Project 1",
+    "description": "Conduct in-depth research to identify target audience and trends",
+    "status": "In_Progress",
+    "priority": "Urgent",
+    "tags": "Research",
+    "startDate": "2023-04-20T00:00:00Z",
+    "dueDate": "2023-10-20T00:00:00Z",
+    "points": 9,
+    "createdById": 4,
+    "assignedToId": 5,
+    "projectId": 1
+  }
+]

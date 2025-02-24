@@ -23,7 +23,7 @@ function generateJWT (id : number) {
 interface FetchUserParams {userId: number;}
 
 interface RegisterUserBody {
-    emailId: number;
+    emailId: string;
     password: string;
     userName: string;
     profileAvatarUrl: string;
@@ -115,7 +115,7 @@ export const registerUser = async (req : Request<{}, {}, RegisterUserBody>, res 
     }
 }
 
-export const signInUser = async (req : Request<{}, {}, {emailId : number, password : string}> , res : Response) : Promise<void> => {
+export const signInUser = async (req : Request<{}, {}, {emailId : string, password : string}> , res : Response) : Promise<void> => {
   try {
     const {emailId , password} = req.body
     const userExist = await prisma.user.findUnique({where : {emailId : emailId}})

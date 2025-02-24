@@ -50,7 +50,13 @@ export const fetchAllTasks =  async (req: Request<{},{},{}, projectRef>, res: Re
 
     const projectExist  = await prisma.project.findUnique({ 
       where : { id : Number(projectId)},
-      include : {tasks : true} 
+      include : {tasks : 
+        {include : 
+          { createdTask : true, 
+            assignedTo : true, 
+            userComments : true, 
+            uploadedFiles :  true
+          }}} 
     })
     if(!projectExist){
      throw new Error("projectId does not exist!");

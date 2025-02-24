@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { Menu } from 'lucide-react'
 import { RootState } from '@/app/redux'
 import { useAppDispatch, useAppSelector } from '@/app/redux'
-import {toggleSidebarView} from '@/state/index'
+import {toggleSidebarView} from '@/state/features/statusSlice/index'
 
 const Navbar = () => {
   

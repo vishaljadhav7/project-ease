@@ -14,8 +14,10 @@ interface projectRequirements {
 
 export const fetchAllProjects = async (req :Request, res : Response) : Promise<void> => {
   try {
-    const users = await prisma.project.findMany();
-    res.status(201).json(new ApiResponse(201, users, "all projects retrieved")) 
+
+    const projects = await prisma.project.findMany();
+
+    res.status(201).json(new ApiResponse(201, projects, "all projects retrieved")) 
     
   } catch (error : any) {
    const statusCode = error instanceof ApiError ? error.statusCode : 500;

@@ -1,6 +1,26 @@
 [
-    {"id":1,"comment":"Comment 1 on task 1","commentById":3,"commentOnTaskId":1},
-    {"id":2,"comment":"Comment 2 on task 1","commentById":5,"commentOnTaskId":1},
-    {"id":3,"comment":"Comment 1 on task 2","commentById":4,"commentOnTaskId":2},
-    {"id":4,"comment":"Comment 2 on task 2","commentById":6,"commentOnTaskId":2}
-  ]
+  {
+    "id": 1,
+    "comment": "Please clarify the design specs for this task",
+    "commentById": 3,
+    "commentOnTaskId": 1
+  },
+  {
+    "id": 2,
+    "comment": "Task is on track, but needs more resources",
+    "commentById": 5,
+    "commentOnTaskId": 1
+  },
+  {
+    "id": 3,
+    "comment": "API endpoints need testing before integration",
+    "commentById": 4,
+    "commentOnTaskId": 2
+  },
+  {
+    "id": 4,
+    "comment": "Consider adjusting timeline due to complexity",
+    "commentById": 6,
+    "commentOnTaskId": 2
+  }
+]

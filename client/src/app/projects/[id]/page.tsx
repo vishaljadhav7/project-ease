@@ -1,20 +1,39 @@
 'use client'
-import { useState } from "react";
 
-type Props = {
-    params: { id: string };
-  };
-  
-const Project = ({ params }: Props) => {
-const { id } = params;
+import React, { useState } from "react";
+import ProjectTitle from "../projectTitle";
+import GridView from "../GridView";
+import TableView from "../TableView";
 
-const [activeTab, setActiveTab] = useState("Board");
-const [isModalNewTaskOpen, setIsModalNewTaskOpen] = useState(false);
+const Project = ({ params }: { params: Promise<{ id: string }> }) => {
+  const [currentTab, setCurrentTab] = useState("Grid");
+  const [showNewTaskModal, setShowNewTaskModal] = useState(false);
 
-// TaskCreationModal, ProjectTitle,  
-// GridView ItemListView DataTableView TimelineView
+  const resolvedParams = React.use(params);
+  const { id } = resolvedParams;
 
-  return <></>;
+  return (
+  <div>
+
+    {/* <ModalNewTask
+       isOpen={isModalNewTaskOpen}
+       onClose={() => setIsModalNewTaskOpen(false)}
+       id={id}
+     /> */}
+
+    {/* {project title will be consistent} */}
+    <ProjectTitle currentTab={currentTab} setCurrentTab={setCurrentTab}/> 
+
+    {currentTab === "Grid" && (
+        <GridView id={id} setShowNewTaskModal={setShowNewTaskModal} />
+      )}
+
+    {currentTab === "Table" && (
+        <TableView id={id} setShowNewTaskModal={setShowNewTaskModal} />
+    )}
+    
+  </div>
+) ;
 };
 
 export default Project;

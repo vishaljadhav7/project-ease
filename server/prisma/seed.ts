@@ -43,7 +43,7 @@ async function main() {
     const jsonData = JSON.parse(fs.readFileSync(filePath, "utf-8"));
     const modelName = path.basename(fileName, path.extname(fileName));
     const model: any = prisma[modelName as keyof typeof prisma];
-    console.log("modelName => ", modelName)
+    // console.log("modelName => ", modelName)
 
     try {
       for (const data of jsonData) {

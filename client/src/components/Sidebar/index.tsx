@@ -2,21 +2,33 @@
 
 import Image from "next/image";
 import { useState } from "react";
-
+import { Project } from "@/state/api";
 import { usePathname } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/app/redux";
 import { RootState } from "@/app/redux";
 import Link from "next/link";
 import {AlertCircle,AlertOctagon,AlertTriangle,Briefcase,ChevronDown,ChevronUp,Home,Layers3,LockIcon,LucideIcon,Search,Settings,ShieldAlert,User,Users,XIcon} from "lucide-react";
-import { toggleSidebarView } from "@/state";
+import { toggleSidebarView } from "@/state/features/statusSlice";
+import { useFetchAllProjectsQuery } from "@/state/api";
 
 const Sidebar = () =>  {
 
   const dispatch = useAppDispatch();
   const {isSidebarCollapsed} = useAppSelector((state : RootState) => state.global);
 
-  const [showProjects, setShowProjects] = useState(true);
-  const [showPriority, setShowPriority] = useState(true);
+  const [showProjects, setShowProjects] = useState(false);
+  const [showPriority, setShowPriority] = useState(false);
+
+  const {data : projects, isLoading, isError} = useFetchAllProjectsQuery()
+
+  if(isLoading){
+
+  }
+
+  if(isError){
+
+  }
+
 
   return (
     <div className={`fixed flex flex-col h-[100%] bg-white z-40 justify-between shadow-xl transition-all duration-100 overflow-y-auto ${isSidebarCollapsed ? "w-0" : "w-64"}  justify-start`}>
@@ -64,7 +76,16 @@ const Sidebar = () =>  {
             <ChevronDown className="h-5 w-5" />
           )}
         </button>
-
+         {showProjects && (
+         projects &&  projects?.data.map((project : Project) => {
+            return ( <SidePanelLinks
+              key={project.id}
+              icon={Briefcase}
+              label={project.projectName}
+              href={`/projects/${project.id}`}
+            />)
+          })
+         )}
 
         <button
           onClick={() => setShowPriority((prev) => !prev)}
@@ -103,6 +124,8 @@ const Sidebar = () =>  {
             />
           </>
         )}
+
+  
      </div>    
     </div>
   )

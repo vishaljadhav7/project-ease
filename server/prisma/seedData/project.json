@@ -1,22 +1,62 @@
 [
-    {"projectName":"Project 1","description":"Desc 1",    "startDate": "2023-01-01T00:00:00Z",
-    "endDate": "2023-12-31T00:00:00Z"},
-    {"projectName":"Project 2","description":"Desc 2", "startDate": "2023-02-01T00:00:00Z",
-    "endDate": "2023-10-15T00:00:00Z"},
-    {"projectName":"Project 3","description":"Desc 3",    "startDate": "2023-03-05T00:00:00Z",
-    "endDate": "2024-03-05T00:00:00Z"},
-    {"projectName":"Project 4","description":"Desc 4","startDate": "2023-01-20T00:00:00Z",
-    "endDate": "2023-09-20T00:00:00Z"},
-    {"projectName":"Project 5","description":"Desc 5", "startDate": "2023-04-15T00:00:00Z",
-    "endDate": "2023-11-30T00:00:00Z"},
-    {"projectName":"Project 6","description":"Desc 6", "startDate": "2023-02-25T00:00:00Z",
-    "endDate": "2023-08-25T00:00:00Z"},
-    {"projectName":"Project 7","description":"Desc 7", "startDate": "2023-05-10T00:00:00Z",
-    "endDate": "2023-12-10T00:00:00Z"},
-    {"projectName":"Project 8","description":"Desc 8", "startDate": "2023-03-01T00:00:00Z",
-    "endDate": "2024-01-01T00:00:00Z"},
-    {"projectName":"Project 9","description":"Desc 9",    "startDate": "2023-07-01T00:00:00Z",
-    "endDate": "2024-02-01T00:00:00Z"},
-    {"projectName":"Project 10","description":"Desc 10",    "startDate": "2023-07-01T00:00:00Z",
-    "endDate": "2024-02-01T00:00:00Z"}
-  ]     
+  {
+    "projectName": "WorkflowSync",
+    "description": "Innovative system to improve workflow efficiency for teams",
+    "startDate": "2023-01-01T00:00:00Z",
+    "endDate": "2023-12-31T00:00:00Z"
+  },
+  {
+    "projectName": "EngageMobile",
+    "description": "Mobile app designed to enhance user engagement and retention",
+    "startDate": "2023-02-01T00:00:00Z",
+    "endDate": "2023-10-15T00:00:00Z"
+  },
+  {
+    "projectName": "CloudSafe",
+    "description": "Cloud platform for secure data storage and easy access",
+    "startDate": "2023-03-05T00:00:00Z",
+    "endDate": "2024-03-05T00:00:00Z"
+  },
+  {
+    "projectName": "SupportBot",
+    "description": "AI tool to automate customer support and reduce workload",
+    "startDate": "2023-01-20T00:00:00Z",
+    "endDate": "2023-09-20T00:00:00Z"
+  },
+  {
+    "projectName": "WebPulse",
+    "description": "Website revamp to boost online presence and user experience",
+    "startDate": "2023-04-15T00:00:00Z",
+    "endDate": "2023-11-30T00:00:00Z"
+  },
+  {
+    "projectName": "SmartNest",
+    "description": "IoT solution for smart home automation and energy savings",
+    "startDate": "2023-02-25T00:00:00Z",
+    "endDate": "2023-08-25T00:00:00Z"
+  },
+  {
+    "projectName": "SkillForge",
+    "description": "Training program to upskill employees in modern technologies",
+    "startDate": "2023-05-10T00:00:00Z",
+    "endDate": "2023-12-10T00:00:00Z"
+  },
+  {
+    "projectName": "ShopStream",
+    "description": "E-commerce platform to streamline sales and inventory management",
+    "startDate": "2023-03-01T00:00:00Z",
+    "endDate": "2024-01-01T00:00:00Z"
+  },
+  {
+    "projectName": "GreenGrid",
+    "description": "Research initiative to explore sustainable energy solutions for cities",
+    "startDate": "2023-07-01T00:00:00Z",
+    "endDate": "2024-02-01T00:00:00Z"
+  },
+  {
+    "projectName": "VRQuest",
+    "description": "Virtual reality game to provide immersive entertainment for users",
+    "startDate": "2023-07-01T00:00:00Z",
+    "endDate": "2024-02-01T00:00:00Z"
+  }
+]

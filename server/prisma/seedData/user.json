@@ -1,12 +1,72 @@
 [
-    {"id":1,"userName":"user1","emailId":"user1@example.com","password":"password1","profileAvatarUrl":"https://plus.unsplash.com/premium_photo-1683972509783-da5a74795bb3?q=80&w=1400"},
-    {"id":2,"userName":"user2","emailId":"user2@example.com","password":"password2","profileAvatarUrl":"https://plus.unsplash.com/premium_photo-1683972509783-da5a74795bb3?q=80&w=1400"},
-    {"id":3,"userName":"user3","emailId":"user3@example.com","password":"password3","profileAvatarUrl":"https://plus.unsplash.com/premium_photo-1683972509783-da5a74795bb3?q=80&w=1400"},
-    {"id":4,"userName":"user4","emailId":"user4@example.com","password":"password4","profileAvatarUrl":"https://plus.unsplash.com/premium_photo-1683972509783-da5a74795bb3?q=80&w=1400"},
-    {"id":5,"userName":"user5","emailId":"user5@example.com","password":"password5","profileAvatarUrl":"https://plus.unsplash.com/premium_photo-1683972509783-da5a74795bb3?q=80&w=1400"},
-    {"id":6,"userName":"user6","emailId":"user6@example.com","password":"password6","profileAvatarUrl":"https://plus.unsplash.com/premium_photo-1683972509783-da5a74795bb3?q=80&w=1400"},
-    {"id":7,"userName":"user7","emailId":"user7@example.com","password":"password7","profileAvatarUrl":"https://plus.unsplash.com/premium_photo-1683972509783-da5a74795bb3?q=80&w=1400"},
-    {"id":8,"userName":"user8","emailId":"user8@example.com","password":"password8","profileAvatarUrl":"https://plus.unsplash.com/premium_photo-1683972509783-da5a74795bb3?q=80&w=1400"},
-    {"id":9,"userName":"user9","emailId":"user9@example.com","password":"password9","profileAvatarUrl":"https://plus.unsplash.com/premium_photo-1683972509783-da5a74795bb3?q=80&w=1400"},
-    {"id":10,"userName":"user10","emailId":"user10@example.com","password":"password10","profileAvatarUrl":"https://plus.unsplash.com/premium_photo-1683972509783-da5a74795bb3?q=80&w=1400"}
-  ]
+  {
+    "id": 1,
+    "userName": "SkyNetX",
+    "emailId": "skylar.network@example.com",
+    "password": "Sky#2023Nx!",
+    "profileAvatarUrl": "https://images.unsplash.com/photo-1605993439219-9d09d2020fa5?q=80&w=1374"
+  },
+  {
+    "id": 2,
+    "userName": "EchoPulse",
+    "emailId": "echo.pulse22@example.com",
+    "password": "Ech0_Puls$2",
+    "profileAvatarUrl": "https://images.unsplash.com/photo-1586297135537-94bc9ba060aa?q=80&w=1480"
+  },
+  {
+    "id": 3,
+    "userName": "BlazeRiser",
+    "emailId": "blaze.riser33@example.com",
+    "password": "Bl@zeR1se#3",
+    "profileAvatarUrl": "https://plus.unsplash.com/premium_photo-1688350808212-4e6908a03925?q=80&w=1469"
+  },
+  {
+    "id": 4,
+    "userName": "FrostByte",
+    "emailId": "frostbyte.code@example.com",
+    "password": "Fr0$tByt&4!",
+    "profileAvatarUrl": "https://plus.unsplash.com/premium_photo-1693000697560-a3f90545c792?q=80&w=1374"
+  },
+  {
+    "id": 5,
+    "userName": "NovaSpark",
+    "emailId": "nova.spark5@example.com",
+    "password": "N0va$prk_5",
+    "profileAvatarUrl": "https://images.unsplash.com/photo-1740031904427-ca6713523372?q=80&w=1470"
+  },
+  {
+    "id": 6,
+    "userName": "QuantumLeap",
+    "emailId": "quantum.leap66@example.com",
+    "password": "Qu@ntumL3@p6",
+    "profileAvatarUrl": "https://images.unsplash.com/photo-1712877209367-49578fa711c9?q=80&w=1528"
+  },
+  {
+    "id": 7,
+    "userName": "ShadowFlux",
+    "emailId": "shadow.flux7@example.com",
+    "password": "Sh@d0wFlx$7",
+    "profileAvatarUrl": "https://plus.unsplash.com/premium_photo-1683972509783-da5a74795bb3?q=80&w=1400"
+  },
+  {
+    "id": 8,
+    "userName": "LunarWave",
+    "emailId": "lunar.wave88@example.com",
+    "password": "Lun@rWv_8!",
+    "profileAvatarUrl": "https://plus.unsplash.com/premium_photo-1672322565907-932e7554b1cc?q=80&w=1374"
+  },
+  {
+    "id": 9,
+    "userName": "SolarDrift",
+    "emailId": "solar.drift99@example.com",
+    "password": "S0l@rDr!ft9",
+    "profileAvatarUrl": "https://images.unsplash.com/photo-1738443194471-4259ecc6ffd7?q=80&w=1374"
+  },
+  {
+    "id": 10,
+    "userName": "CosmoVibe",
+    "emailId": "cosmo.vibe10@example.com",
+    "password": "C0$m0V!b3#10",
+    "profileAvatarUrl": "https://plus.unsplash.com/premium_photo-1683972509783-da5a74795bb3?q=80&w=1400"
+  }
+]

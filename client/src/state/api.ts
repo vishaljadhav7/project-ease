@@ -84,56 +84,68 @@ export interface Team {
 export const api = createApi({
     baseQuery : fetchBaseQuery({baseUrl : process.env.NEXT_PUBLIC_API_BASE_URL}),
     reducerPath : "api",
-    tagTypes : ["Projects", "Tasks"],
+    tagTypes: ["Projects", "Tasks", "Users", "Teams"],
     endpoints : (build) => ({
       fetchAllProjects : build.query<Project[], void>({
         query : () => "/projects",
-        providesTags : ["Projects"]
+        providesTags : ["Projects"],
       }),
+
       createProject : build.mutation<Project, Partial<Project>>({
         query : (project) => ({
           url : "/create-project",
           method : "POST",
           body : project
-        })
+        }),
+        invalidatesTags: ["Projects"],
       }),
+
       fetchAllTasks : build.query<Task[], {projectId : number}>({
         query : ({projectId}) => `tasks?projectId=${projectId}`,
-        providesTags : (result) => result ? 
-        result.map(({id}) => ({type : "Tasks" as const, id})) : [{type : "Tasks" as const}]
-      }),
+        providesTags: (result) =>  result
+            ? result?.data.tasks.map(({ id  }) => ({ type: "Tasks" as const, id }))
+            : [{ type: "Tasks" as const }],
+       }),      
+
+      fetchAllTasksOfUser : build.query<Task[], {userId: number}>({
+        query : ({userId}) => `/tasks/user/${userId}`,
+        providesTags : (result, error, {userId}) =>
+          result
+            ? result?.data.tasks.map(({ id }) => ({ type: "Tasks", id }))
+            : [{ type: "Tasks", id: userId }] 
+       }),
+
       createTask : build.mutation<Task, Partial<Task>>({
         query : (task) => ({
          url : "/create-task",
-        method : "POST",
-        body : task
-       }),
-       invalidatesTags : ["Tasks"], 
+         method : "POST",
+         body : task
+        }),
+        invalidatesTags : ["Tasks"], 
       }),
+
       updateTask : build.mutation<Task, {taskId : number, status : string}>({
         query : ({taskId, status}) => ({
           url : `/task/${taskId}/status`,
           method : "PATCH",
-          body : {status} 
+          body : {status},
+          // headers : {
+          //   Authorization : `Bearer ${localStorage.get("token")}`
+          // } 
         }),
          invalidatesTags : (results, error, {taskId}) => [
            {type : "Tasks", id : taskId} 
          ],
       }),
-      fetchAllTasksOfUser : build.query<Task[], {userId: number}>({
-        query : ({userId}) => `/tasks/user/${userId}`,
-        // providesTags : (result, error, userId) =>
-        //   result
-        //     ? result.map(({ id }) => ({ type: "Tasks", id }))
-        //     : [{ type: "Tasks", id: userId }], 
-      }),
+
       getUsers: build.query<User[], void>({
         query: () => "users",
-        // providesTags: ["Users"] ,
+        providesTags: ["Users"] ,
       }),
+
       getTeams: build.query<Team[], void>({
         query: () => "teams",
-        // providesTags: ["Teams"],
+        providesTags: ["Teams"],
       }),
       search: build.query<SearchResults, string>({
         query: (query) => `search?query=${query}`,
