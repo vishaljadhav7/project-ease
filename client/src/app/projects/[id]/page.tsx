@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import ProjectTitle from "../projectTitle";
-import GridView from "../GridView";
-import TableView from "../TableView";
+import GridView from "../_GridView";
+import TableView from "../_TableView";
 
 const Project = ({ params }: { params: Promise<{ id: string }> }) => {
   const [currentTab, setCurrentTab] = useState("Grid");

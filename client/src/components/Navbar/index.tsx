@@ -1,9 +1,9 @@
 import {Search, Settings} from 'lucide-react'
 import Link from 'next/link'
 import { Menu } from 'lucide-react'
-import { RootState } from '@/app/redux'
-import { useAppDispatch, useAppSelector } from '@/app/redux'
-import {toggleSidebarView} from '@/state/features/statusSlice/index'
+import { RootState } from '@/Redux/store'
+import { useAppDispatch, useAppSelector } from '@/Redux/store'
+import {toggleSidebarView} from '@/features/status/statusSlice'
 
 const Navbar = () => {
   

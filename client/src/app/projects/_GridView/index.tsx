@@ -3,11 +3,11 @@
 import React from 'react'
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { Task as TaskType } from '@/state/api';
+import { Task as TaskType } from '@/features/api';
 import { EllipsisVertical, MessageSquareMore, Plus } from "lucide-react";
 import { format } from "date-fns";
 import Image from "next/image";
-import { useFetchAllTasksQuery , useUpdateTaskMutation} from '@/state/api';
+import { useFetchAllTasksQuery , useUpdateTaskMutation} from '@/features/api';
 
 type GridProps = {
   id: string;

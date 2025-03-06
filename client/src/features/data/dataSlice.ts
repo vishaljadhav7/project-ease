@@ -1,5 +1,6 @@
-import { Project, Task, User } from "@/state/api";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+import { Project, Task, User } from "@/features/api";
 
 
 interface allData {
@@ -18,17 +19,17 @@ const dataSlice = createSlice({
     name : 'data',
     initialState,
     reducers : {
-        addTasks : (state, action : PayloadAction<Task[]>) => {
-            state.allTasks = action.payload
-        },
+     addTasks : (state, action : PayloadAction<Task[]>) => {
+         state.allTasks = action.payload
+     }, 
 
-        addProjects : (state, action : PayloadAction<Project[]>) => {
-           state.allProjects = action.payload
-        },
-
-        addUsers : (state, action : PayloadAction<User[]>) =>{
-            state.allUsers = action.payload
-        } 
+     addProjects : (state, action : PayloadAction<Project[]>) => {
+        state.allProjects = action.payload
+     }, 
+     
+     addUsers : (state, action : PayloadAction<User[]>) =>{
+         state.allUsers = action.payload
+     } 
     }
 })
 

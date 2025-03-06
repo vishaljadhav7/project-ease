@@ -19,8 +19,8 @@ const ApiResponse_1 = __importDefault(require("../utils/ApiResponse"));
 const prisma = new client_1.PrismaClient();
 const fetchAllProjects = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const users = yield prisma.project.findMany();
-        res.status(201).json(new ApiResponse_1.default(201, users, "all projects retrieved"));
+        const projects = yield prisma.project.findMany();
+        res.status(201).json(new ApiResponse_1.default(201, projects, "all projects retrieved"));
     }
     catch (error) {
         const statusCode = error instanceof ApiError_1.default ? error.statusCode : 500;

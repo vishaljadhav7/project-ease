@@ -53,7 +53,7 @@ function main() {
             const jsonData = JSON.parse(fs_1.default.readFileSync(filePath, "utf-8"));
             const modelName = path_1.default.basename(fileName, path_1.default.extname(fileName));
             const model = prisma[modelName];
-            console.log("modelName => ", modelName);
+            // console.log("modelName => ", modelName)
             try {
                 for (const data of jsonData) {
                     yield model.create({ data });

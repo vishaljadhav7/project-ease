@@ -2,14 +2,14 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { Project } from "@/state/api";
+import { Project } from "@/features/api";
 import { usePathname } from "next/navigation";
-import { useAppDispatch, useAppSelector } from "@/app/redux";
-import { RootState } from "@/app/redux";
+import { useAppDispatch, useAppSelector } from "@/Redux/store";
+import { RootState } from "@/Redux/store";
 import Link from "next/link";
 import {AlertCircle,AlertOctagon,AlertTriangle,Briefcase,ChevronDown,ChevronUp,Home,Layers3,LockIcon,LucideIcon,Search,Settings,ShieldAlert,User,Users,XIcon} from "lucide-react";
-import { toggleSidebarView } from "@/state/features/statusSlice";
-import { useFetchAllProjectsQuery } from "@/state/api";
+import { toggleSidebarView } from "@/features/status/statusSlice";
+import { useFetchAllProjectsQuery } from "@/features/api";
 
 const Sidebar = () =>  {
 

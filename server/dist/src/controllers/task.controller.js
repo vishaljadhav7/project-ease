@@ -36,8 +36,12 @@ const fetchAllTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     try {
         const { projectId } = req.query;
         const projectExist = yield prisma.project.findUnique({
-            where: { id: projectId },
-            include: { tasks: true }
+            where: { id: Number(projectId) },
+            include: { tasks: { include: { createdTask: true,
+                        assignedTo: true,
+                        userComments: true,
+                        uploadedFiles: true
+                    } } }
         });
         if (!projectExist) {
             throw new Error("projectId does not exist!");
@@ -56,14 +60,14 @@ const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const taskDetails = req.body;
         const { projectId, createdById, assignedToId } = taskDetails;
-        const projectExist = yield prisma.project.findUnique({ where: { id: projectId } });
+        const projectExist = yield prisma.project.findUnique({ where: { id: Number(projectId) } });
         if (!projectExist) {
             throw new Error("projectId does not exist !");
         }
         const usersIdExist = yield prisma.user.findMany({
             where: {
                 id: {
-                    in: [createdById, assignedToId]
+                    in: [Number(createdById), Number(assignedToId)]
                 }
             },
             select: {
@@ -101,7 +105,7 @@ const modifyTaskStatus = (req, res) => __awaiter(void 0, void 0, void 0, functio
         const { status } = req.body;
         const taskExist = yield prisma.task.update({
             where: {
-                id: taskId,
+                id: Number(taskId),
             },
             data: {
                 status: status,
@@ -123,16 +127,15 @@ exports.modifyTaskStatus = modifyTaskStatus;
 const fetchUserTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { userId } = req.params;
-        console.log("userid ", userId, "user esxist ");
-        const userExist = yield prisma.user.findUnique({ where: { id: userId } });
+        const userExist = yield prisma.user.findUnique({ where: { id: Number(userId) } });
         if (!userExist) {
             throw new Error("user not found for tasks to fetch!");
         }
         const allTasks = yield prisma.task.findMany({
             where: {
                 OR: [
-                    { createdById: userId },
-                    { assignedToId: userId },
+                    { createdById: Number(userId) },
+                    { assignedToId: Number(userId) },
                 ]
             },
             include: {

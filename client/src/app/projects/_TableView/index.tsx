@@ -1,6 +1,6 @@
 import React from 'react'
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useFetchAllTasksQuery } from '@/state/api';
+import { useFetchAllTasksQuery } from '@/features/api';
 import Header from '@/components/Header';
 import { dataGridClassNames, dataGridSxStyles } from "@/lib/utils";
 
@@ -8,7 +8,6 @@ type TableViewProps = {
   id : string,
   setShowNewTaskModal : (isOpen: boolean) => void
 }
-
 
 const columns: GridColDef[] = [
   {

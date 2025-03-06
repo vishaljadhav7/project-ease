@@ -13,12 +13,12 @@ const morgan_1 = __importDefault(require("morgan"));
 const task_routes_1 = __importDefault(require("./routes/task.routes"));
 const app = (0, express_1.default)();
 exports.app = app;
-app.use(express_1.default.json());
+app.use(express_1.default.json({ limit: "16kb" }));
 app.use((0, helmet_1.default)());
-app.use(express_1.default.urlencoded({ extended: true }));
+app.use(express_1.default.urlencoded({ extended: true, limit: "16kb" }));
 app.use((0, cors_1.default)({
-    origin: '*',
-    methods: ["GET", "POST"]
+    origin: 'http://localhost:3000',
+    methods: ["GET", "POST", "DELETE", "PATCH"]
 }));
 app.use((0, morgan_1.default)("common"));
 app.get("/", (req, res) => {

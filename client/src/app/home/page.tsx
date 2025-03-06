@@ -1,21 +1,15 @@
 'use client'
 
-import Navbar from '@/components/Navbar/index';
-import Sidebar from '@/components/Sidebar';
 
-const DashboardLayout = ({children} : {children : React.ReactNode}) => {
+const Home = () => {
 
   return (    
     <div className='flex min-h-screen w-full text-gray-900'>
-      <Sidebar/>
-     <main className={`w-full flex flex-col `}>
-         <Navbar/>
-         {children}
-     </main> 
+        <h1 className="text-3xl text-cyan-600 font-extrabold mx-auto mt-24">Home</h1> 
     </div>
   )
 }
 
 
 
-export default DashboardLayout;
+export default Home;

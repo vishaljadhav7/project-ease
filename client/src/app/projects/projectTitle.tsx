@@ -1,6 +1,6 @@
 import React , {useState} from 'react'
 import Header from '@/components/Header';
-import {  Filter, Grid3x3, List, PlusSquare, Share2, Table } from "lucide-react";
+import {  Filter, Grid3x3, PlusSquare, Share2, Table } from "lucide-react";
 
 type Props = {
   currentTab: string;
@@ -9,7 +9,7 @@ type Props = {
 
 export default function ProjectTitle({currentTab, setCurrentTab} : Props) {
 
-  const [isModalNewProjectOpen, setIsModalNewProjectOpen] = useState(false);
+  const [isModalNewProjectOpen, setIsModalNewProjectOpen] = useState<boolean>(false);
 
   return (
     <div className='bg-slate-300'>
@@ -50,9 +50,8 @@ export default function ProjectTitle({currentTab, setCurrentTab} : Props) {
               setCurrentTab={setCurrentTab}
               currentTab={currentTab}
              />
-             
-             
            </div>
+
            <div className="flex items-center gap-2">
               <button className="text-gray-500 hover:text-gray-600">
                 <Filter className="h-5 w-5" />

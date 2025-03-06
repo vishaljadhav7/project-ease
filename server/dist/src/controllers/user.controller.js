@@ -52,22 +52,23 @@ const fetchUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const userId = (_a = req.params) === null || _a === void 0 ? void 0 : _a.userId;
         const user = yield prisma.user.findUnique({
             where: {
-                id: userId
+                id: Number(userId)
             }
         });
         if (!user) {
             throw new Error("could not find the user");
         }
         const resData = {
-            id: (user === null || user === void 0 ? void 0 : user.id) || 1,
-            emailId: (user === null || user === void 0 ? void 0 : user.emailId) || "asasd asas",
-            userName: user.userName || "asdasd",
-            profileAvatarUrl: (user === null || user === void 0 ? void 0 : user.profileAvatarUrl) || "jpg",
-            teamId: (user === null || user === void 0 ? void 0 : user.teamId) || "1"
+            id: user === null || user === void 0 ? void 0 : user.id,
+            emailId: user === null || user === void 0 ? void 0 : user.emailId,
+            userName: user.userName,
+            profileAvatarUrl: user === null || user === void 0 ? void 0 : user.profileAvatarUrl,
+            teamId: user === null || user === void 0 ? void 0 : user.teamId
         };
         res.status(201).json(new ApiResponse_1.default(201, {}, "user retrieved successfully"));
     }
     catch (error) {
+        console.log("error.message ->>>>> ", error.message, "     ", error);
         const statusCode = error instanceof ApiError_1.default ? error.statusCode : 500;
         const message = error instanceof ApiError_1.default ? error.message : `Server error: ${error.message}`;
         res.status(statusCode).json(new ApiError_1.default(statusCode, message));

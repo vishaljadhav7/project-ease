@@ -1,9 +1,7 @@
 'use client'
-
-import { formatISO } from "date-fns";
 import { useState } from "react";
-import {PopUp} from '@/components/PopUp/index' 
-import { useCreateProjectMutation } from "@/state/api";
+import PopUp from '@/components/PopUp/index' 
+import { useCreateProjectMutation } from "@/features/api";
 
 type Props = {
     isOpen: boolean;
@@ -45,7 +43,7 @@ export default function NewProjectPopup({isOpen, onClose}: Props) {
       });
     };
 
-   const handleChange = (e) => {  
+   const handleChange = (e ) => {  
        setProjectInfo(prev => ({...prev , [e.target.name] : [e.target.value]}))   
    } 
 
@@ -56,7 +54,7 @@ export default function NewProjectPopup({isOpen, onClose}: Props) {
   "w-full rounded border border-gray-300 p-2 shadow-sm ";
 
   return (
-    <PopUp> 
+    <PopUp isOpen={isOpen} onClose={onClose} name="Create New Project"> 
        <form
         className="mt-4 space-y-6"
         onSubmit={(e) => {
@@ -93,6 +91,7 @@ export default function NewProjectPopup({isOpen, onClose}: Props) {
             onChange={handleChange}
           />
         </div>
+
         <button
           type="submit"
           className={`focus-offset-2 mt-4 flex w-full justify-center rounded-md border border-transparent bg-blue-primary px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600 ${

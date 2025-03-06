@@ -10,7 +10,7 @@ type Props = {
   name: string;
 };
 
-const Modal = ({ children, isOpen, onClose, name }: Props) => {
+const PopUp = ({ children, isOpen, onClose, name }: Props)=> {
     if (!isOpen) return null;
   
     return ReactDOM.createPortal(
@@ -35,4 +35,4 @@ const Modal = ({ children, isOpen, onClose, name }: Props) => {
     );
   };
   
-  export default Modal;
+  export default PopUp;

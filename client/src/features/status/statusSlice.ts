@@ -17,11 +17,8 @@ export const globalSlice = createSlice({
     toggleSidebarView: (state, action: PayloadAction<boolean>) => {
       state.isSidebarCollapsed = action.payload;
     },
-    setIsDarkMode: (state, action: PayloadAction<boolean>) => {
-      state.isDarkMode = action.payload;
-    },
   },
 });
 
-export const { toggleSidebarView, setIsDarkMode } = globalSlice.actions;
+export const { toggleSidebarView} = globalSlice.actions;
 export default globalSlice.reducer;
