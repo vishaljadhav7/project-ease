@@ -16,11 +16,11 @@ export const fetchAllProjects = async (req :Request, res : Response) : Promise<v
   try {
 
     const projects = await prisma.project.findMany();
-
     res.status(201).json(new ApiResponse(201, projects, "all projects retrieved")) 
-    
+  
   } catch (error : any) {
     res.status(400).json(new ApiError(400, error.message));
+  
  }
 }
 

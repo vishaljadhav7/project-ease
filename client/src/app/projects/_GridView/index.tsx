@@ -27,10 +27,10 @@ const taskStatus: ColumnType[] = [
 ];
 
 export default function GridView({ id, setShowNewTaskModal }: GridProps) {
-  const { data, isLoading, error } = useFetchAllTasksQuery({ projectId: Number(id) });
+  const { data, isLoading, error } = useFetchAllTasksQuery({ projectId: id });
   const [updateTask] = useUpdateTaskMutation();
 
-  const moveTask = (taskId: number, toStatus: string) => {
+  const moveTask = (taskId: string, toStatus: string) => {
     updateTask({ taskId, status: toStatus });
   };
 
@@ -59,7 +59,7 @@ export default function GridView({ id, setShowNewTaskModal }: GridProps) {
 type TaskPanelProps = {
   status: string;
   tasks: TaskType[];
-  moveTask: (taskId: number, status: string) => void;
+  moveTask: (taskId: string, status: string) => void;
   setShowNewTaskModal: (isOpen: boolean) => void;
 };
 

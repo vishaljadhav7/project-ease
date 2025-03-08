@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { body, param } from "express-validator";
 import { createTask, fetchAllTasks, fetchUserTasks, modifyTaskStatus } from "../controllers/task.controller";
+import authMiddleWare from "../middlewares/verifyUser";
 
 const taskRouter = Router();
 
@@ -35,6 +36,7 @@ taskRouter.post("/create-task", [
  body('createdById').isUUID().withMessage("createdBy id required"),
  body('assignedToId').isUUID().withMessage("assignedTo id required")
 ] , 
+authMiddleWare,
 createTask
 );
 
@@ -42,7 +44,8 @@ taskRouter.patch("/task/:taskId/status",
     [
       param('taskId').isUUID().withMessage("task id required"),
       body('status').isIn(Object.values(Status)).withMessage("invalid status"), 
-    ],
+    ], 
+    authMiddleWare,
     modifyTaskStatus
 );
 
@@ -50,7 +53,8 @@ taskRouter.patch("/task/:taskId/status",
 taskRouter.get("/tasks/user/:userId", 
     [
        param('userId').isUUID().withMessage("user id required"), 
-    ],
+    ], 
+    authMiddleWare,
     fetchUserTasks
 );
 

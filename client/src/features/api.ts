@@ -84,7 +84,23 @@ export interface Project {
 
  export const api = createApi({
     reducerPath : "api",
-    baseQuery : fetchBaseQuery({baseUrl : process.env.NEXT_PUBLIC_API_BASE_URL}),
+    baseQuery: fetchBaseQuery({
+      baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
+      prepareHeaders: (headers, { getState }) => {
+        // Retrieve token from localStorage
+        const token = localStorage.getItem("token");
+  
+        // If token exists, set it in the Authorization header
+        if (token) {
+          headers.set("Authorization", `Bearer ${token}`);
+        }  
+        // Optionally set other headers (e.g., Content-Type)
+        headers.set("Content-Type", "application/json");
+
+        return headers;
+      },
+    }),
+    
     tagTypes: ["Projects", "Tasks", "Users", "Teams"],
     endpoints : (build) => ({
 

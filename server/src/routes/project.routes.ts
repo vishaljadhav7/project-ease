@@ -1,10 +1,11 @@
 import { Router } from "express";
 import { body } from "express-validator";
 import { fetchAllProjects, createProject } from "../controllers/project.controller";
+import authMiddleWare from '../middlewares/verifyUser';
 
 const projectRouter = Router();
 
-projectRouter.get("/projects", fetchAllProjects);
+projectRouter.get("/projects",authMiddleWare,fetchAllProjects);
   
 projectRouter.post("/create-project",  
     [
@@ -13,6 +14,7 @@ projectRouter.post("/create-project",
       body('startDate').isDate().withMessage('start date is required'),
       body('endDate').isDate().withMessage('end date is required'),
     ], 
+    authMiddleWare,
     createProject
 );
 

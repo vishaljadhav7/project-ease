@@ -31,11 +31,11 @@ interface RegisterUserBody {
 }  
 
 const options = {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'strict' as const,
-    maxAge: 1000 * 60 * 60 , // 1 hour in milliseconds
-} 
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "strict" as const,
+  maxAge: 1000 * 60 * 60 * 24 // 1 day
+};
 
 export const fetchAllUsers = async (req : Request, res : Response) : Promise<void> => {
  try {
@@ -112,15 +112,15 @@ export const registerUser = async (req : Request<{}, {}, RegisterUserBody>, res 
 
 export const signInUser = async (req : Request<{}, {}, {emailId : string, password : string}> , res : Response) : Promise<void> => {
   try {
-    const {emailId , password} = req.body
+    const {emailId , password} = req.body;
 
     const userExist = await prisma.user.findUnique({where : {emailId}})
- 
+
     if (!userExist) {
       throw new Error("invalid credentials!") 
     }
     
-    const isPasswordValid = bcrypt.compare(password, userExist.password);
+    const isPasswordValid = await bcrypt.compare(password, userExist.password);
 
     if(!isPasswordValid){
       throw new Error("invalid credentials!") 
@@ -128,11 +128,15 @@ export const signInUser = async (req : Request<{}, {}, {emailId : string, passwo
     
     const token = generateJWT(userExist.id);
       
-    const serverResponse = new ApiResponse(200, userExist, "user signed in successfully");
+    const serverResponse = new ApiResponse(200, userExist, "User signed in successfully");
 
-    res.status(201).json({serverResponse, "token" : token} ).cookie("token" , token, options);
+    res
+      .status(200)
+      .cookie("token", token, options)
+      .json({ serverResponse, token });
 
   } catch (error : any) {
+
     res.status(400).json(new ApiError(400, error.message));
   }
 }

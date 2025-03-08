@@ -13,7 +13,7 @@ app.use(helmet())
 app.use(express.urlencoded({extended : true, limit : "16kb"}));
 
 app.use(cors({
-   origin : 'http://localhost:3001',
+   origin : 'http://localhost:3000',
    methods : ["GET", "POST", "DELETE", "PATCH"] 
 }));
 app.use(morgan("common"));

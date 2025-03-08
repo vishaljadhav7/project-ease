@@ -48,11 +48,13 @@ export const fetchAllTasks =  async (req: Request<{},{},{}, projectRef>, res: Re
   try {
     const {projectId} = req.query;
 
+
+
     const projectExist  = await prisma.project.findUnique({ 
       where : { id : projectId},
       include : {tasks : 
         {include : 
-          { createdTask : true, 
+          {createdTask : true, 
             assignedTo : true, 
             userComments : true, 
             uploadedFiles :  true
@@ -78,7 +80,7 @@ export const createTask = async (req: Request<{}, {}, taskRequirements>, res: Re
      const taskDetails = req.body;
      const {projectId, createdById, assignedToId} = taskDetails;
 
-
+    console.log("(createTask) =>>>  projectId createdById", projectId, createdById)
      const projectExist  = await prisma.project.findUnique({ where : { id : projectId} })
      if(!projectExist){
       throw new Error("projectId does not exist !");
@@ -111,7 +113,7 @@ export const createTask = async (req: Request<{}, {}, taskRequirements>, res: Re
         //@ts-ignore
         taskName, description, status , priority, startDate, dueDate, points,
         projectId, createdById, assignedToId},
-    });
+    }, );
 
     if(!newTask){
       throw new Error("could not create the task!")
@@ -121,19 +123,20 @@ export const createTask = async (req: Request<{}, {}, taskRequirements>, res: Re
     res.status(201).json(serverResponse)
      
     } catch (error : any) {  
+      console.log("(createTask) =>>>  ", error.message)
       res.status(400).json(new ApiError(400, error.message));
     }
   }
   
 
-export const modifyTaskStatus = async (req: Request<{taskId : number}, {}>, res: Response): Promise<void> => {
+export const modifyTaskStatus = async (req: Request<{taskId : string}, {}>, res: Response): Promise<void> => {
     try {
      const { taskId } = req.params;
      const {status} = req.body;
 
      const taskExist = await prisma.task.update({
        where : {
-        id : Number(taskId),
+        id : taskId,
        },
         data : {
         status : status ,
@@ -154,13 +157,13 @@ export const modifyTaskStatus = async (req: Request<{taskId : number}, {}>, res:
 }
 
 export const fetchUserTasks = async (
-    req: Request<{userId : number}>,
+    req: Request<{userId : string}>,
     res: Response
   ): Promise<void> => {
     try {
        const {userId} = req.params;
 
-       const userExist = await prisma.user.findUnique({where : {id : Number(userId)}});
+       const userExist = await prisma.user.findUnique({where : {id : userId}});
        
        if(!userExist){
         throw new Error("user not found for tasks to fetch!")
@@ -169,8 +172,8 @@ export const fetchUserTasks = async (
        const allTasks = await prisma.task.findMany({
         where : {
             OR : [
-              {createdById : Number(userId)},
-              {assignedToId : Number(userId)},
+              {createdById : userId},
+              {assignedToId : userId},
             ]
         },
         include : {

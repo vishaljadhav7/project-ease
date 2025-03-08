@@ -3,6 +3,7 @@
 import { useState, FormEvent } from "react";
 import PopUp from "../PopUp";
 import { useCreateTaskMutation, Priority, Status } from "@/features/api";
+import { useAppSelector } from "@/Redux/store";
 
 // Define interfaces for type safety
 interface TaskFormData {
@@ -25,6 +26,7 @@ interface Props {
 }
 
 export default function NewTaskPopup({ isOpen, onClose, id }: Props): React.ReactNode {
+  const userId = useAppSelector(store=>store.user.userInfo?.id)
   const [createTask, { isLoading }] = useCreateTaskMutation();
 
   const [formData, setFormData] = useState<TaskFormData>({
@@ -35,7 +37,7 @@ export default function NewTaskPopup({ isOpen, onClose, id }: Props): React.Reac
     tags: "",
     startDate: new Date(),
     dueDate: new Date(),
-    createdById: "",
+    createdById: userId,
     assignedToId: "",
     projectId: id ,
   });
@@ -50,9 +52,9 @@ export default function NewTaskPopup({ isOpen, onClose, id }: Props): React.Reac
   // Form validation
   const isFormValid = (): boolean => {
     return Boolean(
-      formData.taskName.trim() &&
-      formData.createdById  &&
-      (id !== null || formData.projectId)
+      formData.taskName &&
+      userId  &&
+      (id !== null)
     );
   };
 
@@ -77,7 +79,7 @@ export default function NewTaskPopup({ isOpen, onClose, id }: Props): React.Reac
         tags: "",
         startDate: new Date(),
         dueDate: new Date(),
-        createdById: "",
+        createdById: userId,
         assignedToId: "",
         projectId: id ,
       });
@@ -188,9 +190,9 @@ export default function NewTaskPopup({ isOpen, onClose, id }: Props): React.Reac
            type="text"
             className={inputStyles}
             placeholder="Author User ID"
-            value={formData.createdById || ""}
+            value={userId || ""}
             id="author"
-            onChange={(e) => handleInputChange("createdById", (e.target.value))}
+            disabled
           />
         </div>
 
