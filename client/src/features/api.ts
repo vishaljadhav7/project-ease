@@ -2,7 +2,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface Project {
-    id: number;
+    id: string;
     projectName: string;
     description?: string;  
     startDate?: Date;
@@ -25,31 +25,31 @@ export interface Project {
   }
   
   export interface User {
-    id?: number;
+    id?: string;
     userName : string;
     emailId: string;
     password: string;
     profileAvatarUrl?: string;
-    teamId?: number;
+    teamId?: string;
   }
   
   export interface uploadedFiles {
-    id: number;
+    id: string;
     fileUrl: string;
     fileName: string;
-    taskId: number;
-    uploadedById: number;
+    taskId: string;
+    uploadedById: string;
   }
   
   export interface UserComments{
-    id: number;
+    id: string;
     comment : string;
-    commentById : number;
-    commentOnTaskId : number;
+    commentById : string;
+    commentOnTaskId : string;
   }
   
   export interface Task {
-    id: number;
+    id: string;
     taskName: string;
     description?: string;
     status?: Status;
@@ -58,9 +58,9 @@ export interface Project {
     startDate?: Date;
     dueDate?: Date;
     points?: string;
-    projectId: number;
-    createdById?: number;
-    assignedToId?: number;
+    projectId: string;
+    createdById?: string;
+    assignedToId?: string;
   
     createdTask?: User;
     assignedTo?: User;
@@ -75,10 +75,10 @@ export interface Project {
   }
   
   export interface Team {
-    teamId: number;
+    teamId: string;
     teamName: string;
-    productOwnerUserId?: number;
-    projectManagerUserId?: number;
+    productOwnerUserId?: string;
+    projectManagerUserId?: string;
   }
   
 
@@ -88,9 +88,10 @@ export interface Project {
     tagTypes: ["Projects", "Tasks", "Users", "Teams"],
     endpoints : (build) => ({
 
-      fetchAllProjects : build.query<Project[], Partial<Project>>({
+      fetchAllProjects : build.query<Project[], void>({
        query : () => "/projects",
        providesTags : ["Projects"],
+       transformResponse : (data : {data : Project[]}) => data.data
       }),
        
       createProject : build.mutation<Project, Partial<Project>>({
@@ -102,20 +103,24 @@ export interface Project {
        invalidatesTags : ["Projects"],
       }),
 
-      fetchAllTasks : build.query<Task[], {projectId : number}>({
+      fetchAllTasks : build.query<Task[], {projectId : string}>({
         query : ({projectId}) => `tasks?projectId=${projectId}`,
-        providesTags: (result) =>  result
-            ? result?.data.tasks.map(({ id } : {id : number}) => ({ type: "Tasks" as const, id }))
-            : [{ type: "Tasks" as const }],
+        providesTags: (result, error, { projectId }) =>
+          result
+            ? [
+                ...result.data.tasks.map(({ id }: { id: string }) => ({ type: "Tasks" as const, id })),
+                { type: "Tasks" as const, id: `project-${projectId}` }, // Project-specific tag
+              ]
+            : [{ type: "Tasks" as const, id: `project-${projectId}` }],
        }),   
 
-      fetchAllTasksOfUser : build.query<Task[], {userId : number}>({
+      fetchAllTasksOfUser : build.query<Task[], {userId : string}>({
          query : ({userId}) => `/tasks/user/${userId}`,
          providesTags : ((result, error, {userId}) => (
              result
-             ? result?.data.tasks.map(({ id }) => ({ type: "Tasks", id }))
+             ? result?.data.tasks.map(({ id } : { id: string }) => ({ type: "Tasks", id }))
              : [{ type: "Tasks", id: userId }] 
-         ))
+         )),
        }),
 
       createTask : build.mutation<Task, Partial<Task>>({
@@ -123,11 +128,13 @@ export interface Project {
          url : "/create-task",
          method : "POST",
          body : task
-        }),
-        invalidatesTags : ["Tasks"], 
+        }),     
+        invalidatesTags: (result, error, task) => [
+          { type: "Tasks" as const, id: `project-${task.projectId}` }, // Invalidate specific project
+        ],
       }),
 
-      updateTask : build.mutation<Task, {taskId : number, status : string}>({
+      updateTask : build.mutation<Task, {taskId : string, status : string}>({
           query : ({taskId, status}) => ({
             url : `/task/${taskId}/status`,
             method : "PATCH",

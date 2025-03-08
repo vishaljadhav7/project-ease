@@ -35,6 +35,7 @@ var Status;
 const fetchAllTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { projectId } = req.query;
+        console.log("(fetchAllTasks) => ", projectId);
         const projectExist = yield prisma.project.findUnique({
             where: { id: Number(projectId) },
             include: { tasks: { include: { createdTask: true,
@@ -43,6 +44,7 @@ const fetchAllTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                         uploadedFiles: true
                     } } }
         });
+        console.log("(fetchAllTasks) => ", projectExist);
         if (!projectExist) {
             throw new Error("projectId does not exist!");
         }
@@ -80,12 +82,14 @@ const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             throw new Error("task author or assignee id does'nt exist");
         }
         const { taskName, description, status, priority, tags, startDate, dueDate, points } = taskDetails;
+        console.log("{taskName, description, status, priority, tags, startDate, dueDate, points}  =>>>> ", { taskName, description, status, priority, tags, startDate, dueDate, points });
         const newTask = yield prisma.task.create({
             data: {
-                taskName, description, status, priority, tags, startDate, dueDate, points,
+                taskName, description, status, priority, startDate, dueDate, points,
                 projectId, createdById, assignedToId
             },
         });
+        console.log("(createTask ctrlr) =>>>>> ", newTask);
         if (!newTask) {
             throw new Error("could not create the task!");
         }
@@ -95,7 +99,7 @@ const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     catch (error) {
         const statusCode = error instanceof ApiError_1.default ? error.statusCode : 500;
         const message = error instanceof ApiError_1.default ? error.message : `Server error: ${error.message}`;
-        res.status(statusCode).json(new ApiError_1.default(statusCode, message));
+        res.status(400).json(new ApiError_1.default(400, error.message));
     }
 });
 exports.createTask = createTask;

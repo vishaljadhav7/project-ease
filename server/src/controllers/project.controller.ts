@@ -20,23 +20,21 @@ export const fetchAllProjects = async (req :Request, res : Response) : Promise<v
     res.status(201).json(new ApiResponse(201, projects, "all projects retrieved")) 
     
   } catch (error : any) {
-   const statusCode = error instanceof ApiError ? error.statusCode : 500;
-   const message = error instanceof ApiError ? error.message : `Server error: ${error.message}`;
-   res.status(statusCode).json(new ApiError(statusCode, message));
+    res.status(400).json(new ApiError(400, error.message));
  }
 }
 
 export const createProject = async (req :Request<{}, {}, projectRequirements>, res : Response) : Promise<void> => {
     try {
       const {projectName, description, startDate, endDate} = req.body
-      const newProject = await prisma.project.create({
+
+ 
+     const newProject = await prisma.project.create({
         data : {projectName, description, startDate, endDate} 
       });
       res.status(201).json(new ApiResponse(201, newProject, "new project created")) 
     
     } catch (error : any) {
-     const statusCode = error instanceof ApiError ? error.statusCode : 500;
-     const message = error instanceof ApiError ? error.message : `Server error: ${error.message}`;
-     res.status(statusCode).json(new ApiError(statusCode, message));
+      res.status(400).json(new ApiError(400, error.message));
    }
   }

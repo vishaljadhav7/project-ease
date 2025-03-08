@@ -1,94 +1,127 @@
 'use client'
-import { useState } from "react";
-import PopUp from '@/components/PopUp/index' 
+
+import { useState, FormEvent } from "react";
+import PopUp from '@/components/PopUp/index';
 import { useCreateProjectMutation } from "@/features/api";
+interface ProjectFormData {
+  projectName: string;
+  description: string;
+  startDate: Date;
+  endDate: Date;
+}
 
-type Props = {
-    isOpen: boolean;
-    onClose: () => void;
-  };
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+}
 
+export default function NewProjectPopup({ isOpen, onClose }: Props) {
+  const [createProject, { isLoading }] = useCreateProjectMutation();
 
-type type_name = Date;
-
-interface ProjectInfoType {
-    projectName : string;
-    description : string;
-    startDate : type_name;
-    endDate : type_name;
- }  
-
-export default function NewProjectPopup({isOpen, onClose}: Props) {
-    const [createProject, { isLoading }] = useCreateProjectMutation();    
-
-   const [projectInfo, setProjectInfo] = useState<ProjectInfoType>({
-    projectName: '',
-    description: '',
+ 
+  const [formData, setFormData] = useState<ProjectFormData>({
+    projectName: "",
+    description: "",
     startDate: new Date(),
     endDate: new Date(),
-  })
-    
-   const handleSubmit = async () => {
-    const {projectName, description, startDate, endDate} = projectInfo;
-     if (!projectName || 
-        !startDate || 
-        !endDate || 
-        !description) return;
-       
-      await createProject({
-        projectName,
-        description,
-        startDate,
-        endDate,
-      });
-    };
+  });
 
-   const handleChange = (e ) => {  
-       setProjectInfo(prev => ({...prev , [e.target.name] : [e.target.value]}))   
-   } 
 
-   const isFormValid = () => {
-    return projectInfo.projectName && projectInfo.description && projectInfo.startDate && projectInfo.endDate;
+  const isFormValid = (): boolean => {
+    return Boolean(
+      formData.projectName.trim() &&
+      formData.description.trim() &&
+      formData.startDate instanceof Date &&
+      !isNaN(formData.startDate.getTime()) &&
+      formData.endDate instanceof Date &&
+      !isNaN(formData.endDate.getTime())
+    );
   };
-  const inputStyles =
-  "w-full rounded border border-gray-300 p-2 shadow-sm ";
+
+
+  const handleInputChange = (
+    field: keyof ProjectFormData,
+    value: string | Date
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    if (!isFormValid()) return;
+
+    try {
+      await createProject(formData).unwrap();
+    
+      setFormData({
+        projectName: "",
+        description: "",
+        startDate: new Date(),
+        endDate: new Date(),
+      });
+      onClose(); 
+    } catch (error) {
+      console.error('Failed to create project:', error);
+    }
+  };
+
+  const inputStyles = "w-full rounded border border-gray-300 p-2 shadow-sm";
 
   return (
-    <PopUp isOpen={isOpen} onClose={onClose} name="Create New Project"> 
-       <form
-        className="mt-4 space-y-6"
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}
-       >
-        <input
-          type="text"
-          className={inputStyles}
-          name = "projectName"
-          placeholder="Project Name"
-          value={projectInfo.projectName}
-          onChange={handleChange}
-        />
+    <PopUp isOpen={isOpen} onClose={onClose} name="Create New Project">
+      <form className="mt-4 space-y-6" onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="projectName">Project Name</label>
+          <input
+            type="text"
+            className={inputStyles}
+            name="projectName"
+            id="projectName"
+            placeholder="Project Name"
+            value={formData.projectName}
+            onChange={(e) => handleInputChange('projectName', e.target.value)}
+          />
+        </div>
 
-        <textarea
-          className={inputStyles}
-          name = "description"
-          placeholder="Description"
-          value={projectInfo.description}
-          onChange={handleChange}
-        />
+        <div>
+          <label htmlFor="description">Description</label>
+          <textarea
+            className={inputStyles}
+            name="description"
+            id="description"
+            placeholder="Description"
+            value={formData.description}
+            onChange={(e) => handleInputChange('description', e.target.value)}
+          />
+        </div>
 
-         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-2">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-2">
           <input
             type="date"
             className={inputStyles}
-            onChange={handleChange}
+            value={formData.startDate.toISOString().split('T')[0]}
+            onChange={(e) => {
+              const date = new Date(e.target.value);
+              if (!isNaN(date.getTime())) {
+                handleInputChange('startDate', date);
+              }
+            }}
           />
           <input
             type="date"
             className={inputStyles}
-            onChange={handleChange}
+            value={formData.endDate.toISOString().split('T')[0]}
+            onChange={(e) => {
+              const date = new Date(e.target.value);
+              if (!isNaN(date.getTime())) {
+                handleInputChange('endDate', date);
+              }
+            }}
           />
         </div>
 
@@ -101,7 +134,7 @@ export default function NewProjectPopup({isOpen, onClose}: Props) {
         >
           {isLoading ? "Creating..." : "Create Project"}
         </button>
-       </form>
+      </form>
     </PopUp>
-  )
+  );
 }

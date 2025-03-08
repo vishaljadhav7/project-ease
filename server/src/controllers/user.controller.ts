@@ -8,7 +8,7 @@ import ApiError from "../utils/ApiError";
 
 const prisma = new PrismaClient();
 
-function generateJWT (id : number) {
+function generateJWT (id : string) {
   const secretKey = process.env.SECRET_KEY;
   
   if (!secretKey) {
@@ -20,14 +20,14 @@ function generateJWT (id : number) {
   });
 }
 
-interface FetchUserParams {userId: number;}
+interface FetchUserParams {userId: string;}
 
 interface RegisterUserBody {
     emailId: string;
     password: string;
     userName: string;
     profileAvatarUrl: string;
-    teamId?: number;
+    teamId?: string;
 }  
 
 const options = {
@@ -43,9 +43,7 @@ export const fetchAllUsers = async (req : Request, res : Response) : Promise<voi
    res.status(201).json(new ApiResponse(201, users, "all users retrieved")) 
    
  } catch (error : any) {
-  const statusCode = error instanceof ApiError ? error.statusCode : 500;
-  const message = error instanceof ApiError ? error.message : `Server error: ${error.message}`;
-  res.status(statusCode).json(new ApiError(statusCode, message));
+  res.status(401).json(new ApiError(401, error.message));
 }
 }
 
@@ -56,7 +54,7 @@ export const fetchUser = async (req : Request<FetchUserParams>, res : Response) 
       const userId = req.params?.userId
       const user = await prisma.user.findUnique({
         where : {
-          id : Number(userId)
+          id : userId
         }
       })
 
@@ -75,16 +73,14 @@ export const fetchUser = async (req : Request<FetchUserParams>, res : Response) 
       res.status(201).json(new ApiResponse(201, {}, "user retrieved successfully"))
 
     } catch (error : any) {
-      console.log("error.message ->>>>> ",error.message, "     " , error)
-      const statusCode = error instanceof ApiError ? error.statusCode : 500;
-      const message = error instanceof ApiError ? error.message : `Server error: ${error.message}`;
-      res.status(statusCode).json(new ApiError(statusCode, message));
+      res.status(401).json(new ApiError(401, error.message));
     }
 }
 
 export const registerUser = async (req : Request<{}, {}, RegisterUserBody>, res : Response) : Promise<void> => {
     try {
       const {emailId, password, userName, profileAvatarUrl, teamId} : RegisterUserBody =  req.body;
+
 
       const userExist = await prisma.user.findUnique({where : {emailId : emailId}})
      
@@ -93,6 +89,7 @@ export const registerUser = async (req : Request<{}, {}, RegisterUserBody>, res 
       }
 
       const hashedPassword = await bcrypt.hash(password, 10)
+   
 
       const newUser = await prisma.user.create({
         data: {emailId, password : hashedPassword, userName , profileAvatarUrl, teamId},
@@ -109,17 +106,16 @@ export const registerUser = async (req : Request<{}, {}, RegisterUserBody>, res 
       res.status(201).json({serverResponse, "token" : token} ).cookie("token" , token, options);
 
     } catch (error : any) {
-      const statusCode = error instanceof ApiError ? error.statusCode : 500;
-      const message = error instanceof ApiError ? error.message : `Server error: ${error.message}`;
-      res.status(statusCode).json(new ApiError(statusCode, message));
+      res.status(400).json(new ApiError(400, error.message));
     }
 }
 
 export const signInUser = async (req : Request<{}, {}, {emailId : string, password : string}> , res : Response) : Promise<void> => {
   try {
     const {emailId , password} = req.body
-    const userExist = await prisma.user.findUnique({where : {emailId : emailId}})
 
+    const userExist = await prisma.user.findUnique({where : {emailId}})
+ 
     if (!userExist) {
       throw new Error("invalid credentials!") 
     }
@@ -130,15 +126,13 @@ export const signInUser = async (req : Request<{}, {}, {emailId : string, passwo
       throw new Error("invalid credentials!") 
     }
     
-    const token = generateJWT(userExist.id) ;
+    const token = generateJWT(userExist.id);
       
     const serverResponse = new ApiResponse(200, userExist, "user signed in successfully");
 
     res.status(201).json({serverResponse, "token" : token} ).cookie("token" , token, options);
 
   } catch (error : any) {
-    const statusCode = error instanceof ApiError ? error.statusCode : 500;
-    const message = error instanceof ApiError ? error.message : `Server error: ${error.message}`;
-    res.status(statusCode).json(new ApiError(statusCode, message));
+    res.status(400).json(new ApiError(400, error.message));
   }
 }

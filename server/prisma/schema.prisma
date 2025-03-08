@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id               Int    @id @default(autoincrement())
+  id               String    @id @default(uuid())
   userName         String     
   emailId          String     @unique
   password         String
@@ -23,7 +23,7 @@ model User {
   createdTasks     Task[]    @relation("createdTasks")
   assignedTasks    Task[]    @relation("assignedTasks")
 
-  teamId           Int?
+  teamId           String?
   team             Team?     @relation(fields: [teamId], references: [id])
 
   taskAssignments  TaskAssignments[]
@@ -32,37 +32,37 @@ model User {
 }
 
 model Team {
-   id                    Int    @id @default(autoincrement())
+   id                    String    @id @default(uuid())
    teamName              String
    users                 User[] 
    projectTeams          ProjectTeam[]
-   productOwnerUserId    Int? 
-   projectManagerUserId  Int?
+   productOwnerUserId    String? 
+   projectManagerUserId  String?
 }
 
 model Project {
-   id               Int    @id @default(autoincrement())
+   id               String    @id @default(uuid())
    projectName      String
    description      String?
    startDate        DateTime?
    endDate          DateTime?
    tasks            Task[]     @relation("projectTask")
-   projectTeams      ProjectTeam[]   
+   projectTeams     ProjectTeam[]   
 }
 
 
 model ProjectTeam {
-  id               Int    @id @default(autoincrement())
+   id              String    @id @default(uuid())
   
-  teamId           Int
+  teamId           String
   team             Team       @relation(fields: [teamId], references: [id])   
 
-  projectId        Int
+  projectId        String
   project          Project    @relation(fields: [projectId], references: [id])            
 }
 
 model Task {
-  id               Int    @id @default(autoincrement())
+  id               String    @id @default(uuid())
   taskName         String
   description      String?
   status           Status?
@@ -72,13 +72,13 @@ model Task {
   dueDate          DateTime?
   points           Int?
 
-  createdById      Int
+  createdById      String
   createdTask      User        @relation("createdTasks", fields: [createdById], references: [id])
   
-  assignedToId     Int?
+  assignedToId     String?
   assignedTo       User?        @relation("assignedTasks", fields: [assignedToId], references: [id])
 
-  projectId        Int
+  projectId        String
   project          Project      @relation("projectTask", fields: [projectId], references: [id])
 
   taskAssignments  TaskAssignments[]    
@@ -87,35 +87,35 @@ model Task {
 }
  
 model TaskAssignments { 
-  id               Int    @id @default(autoincrement())
+  id               String    @id @default(uuid())
   
-  userId           Int
+  userId           String
   user             User       @relation(fields: [userId], references: [id])
 
-  taskId           Int
+  taskId           String
   task             Task       @relation(fields: [taskId], references: [id])    
 }
 
 model UploadedFiles {
-  id               Int    @id @default(autoincrement())
+  id               String     @id @default(uuid())
   fileUrl          String     @default("https://plus.unsplash.com/premium_photo-1677402408071-232d1c3c3787?q=80&w=1480")
   fileName         String
 
-  taskId           Int
-  task             Task      @relation(fields: [taskId], references: [id]) 
+  taskId           String
+  task             Task       @relation(fields: [taskId], references: [id]) 
 
-  uploadedById     Int     
+  uploadedById     String     
   uploadedBy       User       @relation(fields: [uploadedById], references: [id])
 }
 
 model UserComments {
-  id               Int    @id @default(autoincrement())
+  id               String       @id @default(uuid())
   comment          String
 
-  commentById      Int
+  commentById      String
   commentBy        User         @relation(fields: [commentById], references: [id])
 
-  commentOnTaskId  Int
+  commentOnTaskId  String
   commentOnTask    Task         @relation(fields: [commentOnTaskId], references: [id])      
 }
 

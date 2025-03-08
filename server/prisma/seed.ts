@@ -14,26 +14,27 @@ async function deleteAllData(orderedFileNames: string[]) {
     try {
       await model.deleteMany({});
       console.log(`Cleared data from ${modelName}`);
-    } catch (error) {
-      console.error(`Error clearing data from ${modelName}:`, error);
+    } catch (error : any) {
+      console.error(`Error clearing data from ${modelName}:`, error.message);
     }
   }
 }
 
 async function main() {
-  const dataDirectory = path.join(__dirname, "seedData");
+  const dataDirectory = path.join(__dirname, "seedData3");
 
   const orderedFileNames = [
-    "team.json",
-    "project.json",
-    "projectTeam.json",
     "user.json",
+    "project.json",
     "task.json",
+    "team.json",
+    "projectTeam.json",
+    "taskAssignments.json",
     "uploadedFiles.json",
     "userComments.json",
-    "taskAssignments.json",
   ];
 
+  
 
   await deleteAllData(orderedFileNames);
 
@@ -50,8 +51,8 @@ async function main() {
           await model.create({ data });
       }
       console.log(`Seeded ${modelName} with data from ${fileName}`);
-    } catch (error) {
-      console.error(`Error seeding data for ${modelName}:`, error);
+    } catch (error : any) {
+      console.error(`Error seeding data for ${modelName}:`, error.message);
     }
   }
 }

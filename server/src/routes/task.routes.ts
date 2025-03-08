@@ -13,7 +13,7 @@ const Priority = {
 }
 
 const Status = {
- To_Do : "To_Do",
+ To_Do : "To_Do",          
  In_Progress : "In_Progress",
  Under_Review : "Under_Review",
  Completed : "Completed",
@@ -31,16 +31,16 @@ taskRouter.post("/create-task", [
  body('startDate').isDate().withMessage('start date is required'),
  body('dueDate').isDate().withMessage('due Date is required'),
  body('points').isNumeric().optional(),
- body('projectId').isLength({min:1}).withMessage("project id required"),
- body('createdById').isLength({min:1}).withMessage("createdBy id required"),
- body('assignedToId').isLength({min:1}).withMessage("assignedTo id required")
+ body('projectId').isUUID().withMessage("project id required"),
+ body('createdById').isUUID().withMessage("createdBy id required"),
+ body('assignedToId').isUUID().withMessage("assignedTo id required")
 ] , 
 createTask
 );
 
 taskRouter.patch("/task/:taskId/status", 
     [
-      param('taskId').isLength({min:1}).withMessage("task id required"),
+      param('taskId').isUUID().withMessage("task id required"),
       body('status').isIn(Object.values(Status)).withMessage("invalid status"), 
     ],
     modifyTaskStatus
@@ -49,7 +49,7 @@ taskRouter.patch("/task/:taskId/status",
 
 taskRouter.get("/tasks/user/:userId", 
     [
-       param('userId').isLength({min:1}).withMessage("user id required"), 
+       param('userId').isUUID().withMessage("user id required"), 
     ],
     fetchUserTasks
 );

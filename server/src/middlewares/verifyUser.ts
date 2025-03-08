@@ -5,14 +5,9 @@ import jwt, { JwtHeader, JwtPayload } from "jsonwebtoken";
 
 const prisma = new PrismaClient()
 
-
-
-// Define the User interface for the decoded token
 interface User {
     id: string;
 }
-
-// Extend the Express Request interface to include user property
 declare module 'express' {
     export interface Request {
         user?: User;

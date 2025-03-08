@@ -2,11 +2,11 @@ import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import ApiResponse from "../utils/ApiResponse";
 import ApiError from "../utils/ApiError";
-
+// import { Status, Priority } from "@prisma/client";
 const prisma = new PrismaClient();
 
 interface projectRef {
-    projectId : number
+    projectId : string
 }
 
 enum Priority {
@@ -34,9 +34,9 @@ interface taskRequirements {
     startDate : Date;
     dueDate : Date;
     points? : number;
-    projectId : number;
-    createdById: number;
-    assignedToId : number;
+    projectId : string;
+    createdById: string;
+    assignedToId : string;
 }
 
 interface taskStatus {
@@ -49,7 +49,7 @@ export const fetchAllTasks =  async (req: Request<{},{},{}, projectRef>, res: Re
     const {projectId} = req.query;
 
     const projectExist  = await prisma.project.findUnique({ 
-      where : { id : Number(projectId)},
+      where : { id : projectId},
       include : {tasks : 
         {include : 
           { createdTask : true, 
@@ -58,6 +58,7 @@ export const fetchAllTasks =  async (req: Request<{},{},{}, projectRef>, res: Re
             uploadedFiles :  true
           }}} 
     })
+
     if(!projectExist){
      throw new Error("projectId does not exist!");
     }
@@ -66,9 +67,9 @@ export const fetchAllTasks =  async (req: Request<{},{},{}, projectRef>, res: Re
     res.status(201).json(serverResponse)
 
   } catch (error : any) {
+
     const statusCode = error instanceof ApiError ? error.statusCode : 500;
-    const message = error instanceof ApiError ? error.message : `Server error: ${error.message}`;
-    res.status(statusCode).json(new ApiError(statusCode, message));
+    res.status(statusCode).json(new ApiError(statusCode, error.message));
   }
 }
 
@@ -76,8 +77,9 @@ export const createTask = async (req: Request<{}, {}, taskRequirements>, res: Re
     try {
      const taskDetails = req.body;
      const {projectId, createdById, assignedToId} = taskDetails;
-     
-     const projectExist  = await prisma.project.findUnique({ where : { id : Number(projectId)} })
+
+
+     const projectExist  = await prisma.project.findUnique({ where : { id : projectId} })
      if(!projectExist){
       throw new Error("projectId does not exist !");
      }
@@ -85,28 +87,31 @@ export const createTask = async (req: Request<{}, {}, taskRequirements>, res: Re
      const usersIdExist = await prisma.user.findMany({
       where : {
         id : {
-          in : [Number(createdById), Number(assignedToId)]
+          in : [createdById, assignedToId]
         }
       },
       select: {
         id: true
-      }
+      }         
      });
 
      const found_Ids = usersIdExist.map(user => user.id);
      const bothExist = found_Ids.includes(createdById) && found_Ids.includes(assignedToId);
-     
+
      if(!bothExist){
        throw new Error("task author or assignee id does'nt exist");
      }
 
-     const {taskName, description, status, priority, tags, startDate, dueDate, points} = taskDetails
+     const {taskName, description, status, priority, tags, startDate, dueDate, points} = taskDetails;
    
+     console.log("{taskName, description, status, priority, tags, startDate, dueDate, points}  =>>>> ", {taskName, description, status, priority, tags, startDate, dueDate, points} )
+     
      const newTask = await prisma.task.create({
       data: {
-        taskName, description, status, priority, tags, startDate, dueDate, points,
+        //@ts-ignore
+        taskName, description, status , priority, startDate, dueDate, points,
         projectId, createdById, assignedToId},
-    })
+    });
 
     if(!newTask){
       throw new Error("could not create the task!")
@@ -115,10 +120,8 @@ export const createTask = async (req: Request<{}, {}, taskRequirements>, res: Re
     const serverResponse = new ApiResponse(201, newTask, "task created successfully!")
     res.status(201).json(serverResponse)
      
-    } catch (error : any) {
-      const statusCode = error instanceof ApiError ? error.statusCode : 500;
-      const message = error instanceof ApiError ? error.message : `Server error: ${error.message}`;
-      res.status(statusCode).json(new ApiError(statusCode, message));
+    } catch (error : any) {  
+      res.status(400).json(new ApiError(400, error.message));
     }
   }
   
@@ -146,8 +149,7 @@ export const modifyTaskStatus = async (req: Request<{taskId : number}, {}>, res:
       
     } catch (error : any) {
       const statusCode = error instanceof ApiError ? error.statusCode : 500;
-      const message = error instanceof ApiError ? error.message : `Server error: ${error.message}`;
-      res.status(statusCode).json(new ApiError(statusCode, message));
+      res.status(statusCode).json(new ApiError(statusCode, error.message));
     }
 }
 
@@ -182,7 +184,7 @@ export const fetchUserTasks = async (
        
     } catch (error : any) {
       const statusCode = error instanceof ApiError ? error.statusCode : 500;
-      const message = error instanceof ApiError ? error.message : `Server error: ${error.message}`;
-      res.status(statusCode).json(new ApiError(statusCode, message));
+   
+      res.status(statusCode).json(new ApiError(statusCode, error.message));
     }
 }

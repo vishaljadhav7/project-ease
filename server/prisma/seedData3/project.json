@@ -1,72 +1,12 @@
 [
-  {
-    "id": 1,
-    "projectName": "Apollo",
-    "description": "A space exploration project.",
-    "startDate": "2023-01-01T00:00:00Z",
-    "endDate": "2023-12-31T00:00:00Z"
-  },
-  {
-    "id": 2,
-    "projectName": "Beacon",
-    "description": "Developing advanced navigation systems.",
-    "startDate": "2023-02-01T00:00:00Z",
-    "endDate": "2023-10-15T00:00:00Z"
-  },
-  {
-    "id": 3,
-    "projectName": "Catalyst",
-    "description": "A project to boost renewable energy use.",
-    "startDate": "2023-03-05T00:00:00Z",
-    "endDate": "2024-03-05T00:00:00Z"
-  },
-  {
-    "id": 4,
-    "projectName": "Delta",
-    "description": "Delta project for new software development techniques.",
-    "startDate": "2023-01-20T00:00:00Z",
-    "endDate": "2023-09-20T00:00:00Z"
-  },
-  {
-    "id": 5,
-    "projectName": "Echo",
-    "description": "Echo project focused on AI advancements.",
-    "startDate": "2023-04-15T00:00:00Z",
-    "endDate": "2023-11-30T00:00:00Z"
-  },
-  {
-    "id": 6,
-    "projectName": "Foxtrot",
-    "description": "Exploring cutting-edge biotechnology.",
-    "startDate": "2023-02-25T00:00:00Z",
-    "endDate": "2023-08-25T00:00:00Z"
-  },
-  {
-    "id": 7,
-    "projectName": "Golf",
-    "description": "Development of new golf equipment using AI.",
-    "startDate": "2023-05-10T00:00:00Z",
-    "endDate": "2023-12-10T00:00:00Z"
-  },
-  {
-    "id": 8,
-    "projectName": "Hotel",
-    "description": "Hotel management system overhaul.",
-    "startDate": "2023-03-01T00:00:00Z",
-    "endDate": "2024-01-01T00:00:00Z"
-  },
-  {
-    "id": 9,
-    "projectName": "India",
-    "description": "Telecommunication infrastructure upgrade.",
-    "startDate": "2023-06-01T00:00:00Z",
-    "endDate": "2023-12-01T00:00:00Z"
-  },
-  {
-    "id": 10,
-    "projectName": "Juliet",
-    "description": "Initiative to enhance cyber-security measures.",
-    "startDate": "2023-07-01T00:00:00Z",
-    "endDate": "2024-02-01T00:00:00Z"
-  }
+  {"id": "e258f3d3-a3b7-4e82-a3d7-7a27196b4481", "projectName": "WorkflowSync", "description": "Innovative system to improve workflow efficiency for teams", "startDate": "2023-01-01T00:00:00Z", "endDate": "2023-12-31T00:00:00Z"},
+  {"id": "1898778a-6e50-4bd9-9ecc-95439f86368e", "projectName": "EngageMobile", "description": "Mobile app designed to enhance user engagement and retention", "startDate": "2023-02-01T00:00:00Z", "endDate": "2023-10-15T00:00:00Z"},
+  {"id": "db6ab4ae-83ef-4b20-b02e-66375906e963", "projectName": "CloudSafe", "description": "Cloud platform for secure data storage and easy access", "startDate": "2023-03-05T00:00:00Z", "endDate": "2024-03-05T00:00:00Z"},
+  {"id": "ae976771-17b1-43e2-9fa9-d6206f726861", "projectName": "SupportBot", "description": "AI tool to automate customer support and reduce workload", "startDate": "2023-01-20T00:00:00Z", "endDate": "2023-09-20T00:00:00Z"},
+  {"id": "5780564f-08ce-47be-ab9a-a292f6b22e60", "projectName": "WebPulse", "description": "Website revamp to boost online presence and user experience", "startDate": "2023-04-15T00:00:00Z", "endDate": "2023-11-30T00:00:00Z"},
+  {"id": "2665b02c-4449-41a0-aec9-b9d0926ae63f", "projectName": "SmartNest", "description": "IoT solution for smart home automation and energy savings", "startDate": "2023-02-25T00:00:00Z", "endDate": "2023-08-25T00:00:00Z"},
+  {"id": "60df444e-13e0-4e9e-b89f-120c12b222a4", "projectName": "SkillForge", "description": "Training program to upskill employees in modern technologies", "startDate": "2023-05-10T00:00:00Z", "endDate": "2023-12-10T00:00:00Z"},
+  {"id": "d0e85733-6b15-4c9f-ad39-be2ae3d5e976", "projectName": "ShopStream", "description": "E-commerce platform to streamline sales and inventory management", "startDate": "2023-03-01T00:00:00Z", "endDate": "2024-01-01T00:00:00Z"},
+  {"id": "309af2c0-fc7d-4714-8a31-48a9492fad53", "projectName": "GreenGrid", "description": "Research initiative to explore sustainable energy solutions for cities", "startDate": "2023-07-01T00:00:00Z", "endDate": "2024-02-01T00:00:00Z"},
+  {"id": "b9a6b9df-d783-4532-bea1-acc29b1d8765", "projectName": "VRQuest", "description": "Virtual reality game to provide immersive entertainment for users", "startDate": "2023-07-01T00:00:00Z", "endDate": "2024-02-01T00:00:00Z"}
 ]
