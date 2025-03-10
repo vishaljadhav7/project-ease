@@ -1,5 +1,5 @@
 'use client'
-
+ 
 import { useState, FormEvent } from "react";
 import PopUp from '@/components/PopUp/index';
 import { useCreateProjectMutation } from "@/features/api";
@@ -110,7 +110,7 @@ export default function NewProjectPopup({ isOpen, onClose }: Props) {
               if (!isNaN(date.getTime())) {
                 handleInputChange('startDate', date);
               }
-            }}
+            }}     
           />
           <input
             type="date"

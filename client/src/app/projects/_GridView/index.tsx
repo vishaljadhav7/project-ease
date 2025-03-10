@@ -1,17 +1,19 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Task as TaskType } from '@/features/api';
 import { EllipsisVertical, MessageSquareMore, Plus } from 'lucide-react';
 import { format } from 'date-fns';
 import Image from 'next/image';
-import { useFetchAllTasksQuery, useUpdateTaskMutation } from '@/features/api';
+import { useUpdateTaskMutation } from '@/features/api';
+import EditTaskPopup from '@/components/EditTaskPopup';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 type GridProps = {
-  id: string;
   setShowNewTaskModal: (isOpen: boolean) => void;
+  tasks: TaskType[];
 };
 
 type ColumnType = {
@@ -26,27 +28,24 @@ const taskStatus: ColumnType[] = [
   { id: '*&lfd-e3', status: 'Completed' },
 ];
 
-export default function GridView({ id, setShowNewTaskModal }: GridProps) {
-  const { data, isLoading, error } = useFetchAllTasksQuery({ projectId: id });
-  const [updateTask] = useUpdateTaskMutation();
+export default function GridView({ setShowNewTaskModal, tasks }: GridProps) {
+  const [updateTask, { isLoading }] = useUpdateTaskMutation();
 
   const moveTask = (taskId: string, toStatus: string) => {
     updateTask({ taskId, status: toStatus });
   };
 
-  if (isLoading) return <div className="p-4 text-gray-500">Loading...</div>;
-  if (error)
-    return <div className="p-4 text-red-500">An error occurred while fetching tasks</div>;
+  if (isLoading) return <LoadingSpinner />;
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="grid grid-cols-1 gap-6 p-6 md:grid-cols-2 xl:grid-cols-4 bg-gray-50 min-h-screen">
-        {data &&
+      <div className="grid grid-cols-1 gap-6 p-6 md:grid-cols-2 xl:grid-cols-4 bg-gray-100 min-h-screen">
+        {tasks &&
           taskStatus.map((column) => (
             <TaskPanel
               key={column.id}
               status={column.status}
-              tasks={data?.data.tasks || []}
+              tasks={tasks || []}
               moveTask={moveTask}
               setShowNewTaskModal={setShowNewTaskModal}
             />
@@ -66,7 +65,7 @@ type TaskPanelProps = {
 const TaskPanel = ({ status, tasks, moveTask, setShowNewTaskModal }: TaskPanelProps) => {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'task',
-    drop: (item: { id: number }) => moveTask(item.id, status),
+    drop: (item: { id: string }) => moveTask(item.id, status),
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
     }),
@@ -75,38 +74,33 @@ const TaskPanel = ({ status, tasks, moveTask, setShowNewTaskModal }: TaskPanelPr
   const tasksCount = tasks.filter((task) => task.status === status).length;
 
   const statusColors: Record<string, string> = {
-    To_Do: '#2563EB', // Blue
-    In_Progress: '#059669', // Green
-    Under_Review: '#D97706', // Amber
-    Completed: '#859669', // Olive
+    To_Do: '#3B82F6', // Softer Blue
+    In_Progress: '#10B981', // Softer Green
+    Under_Review: '#F59E0B', // Softer Amber
+    Completed: '#6B7280', // Softer Gray
   };
 
   return (
     <div
       ref={drop}
-      className={`rounded-xl shadow-md bg-white p-4 transition-all duration-200 ${
-        isOver ? 'bg-blue-50 shadow-lg' : ''
+      className={`rounded-xl bg-white shadow-sm border border-gray-200 p-4 transition-all duration-300 ${
+        isOver ? 'bg-gray-50 shadow-md' : ''
       }`}
     >
       {/* Header */}
       <div
-        className="flex items-center justify-between p-3 rounded-t-lg"
-        style={{ backgroundColor: statusColors[status] }}
+        className="flex items-center justify-between p-2 rounded-md mb-4"
+        style={{ backgroundColor: `${statusColors[status]}10` }} // 10% opacity for subtlety
       >
-        <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+        <h3 className="text-md font-semibold text-gray-800 flex items-center gap-2">
           {status.replace('_', ' ')}
-          <span
-            className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white text-black text-sm font-medium"
-          >
+          <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-200 text-gray-700 text-xs font-medium">
             {tasksCount}
           </span>
         </h3>
-        <div className="flex items-center gap-2">
-          <button className="text-white hover:text-gray-200 transition-colors">
-            <EllipsisVertical size={20} />
-          </button>
+        <div className="flex items-center gap-2"> 
           <button
-            className="p-1 bg-white rounded-full text-black hover:bg-gray-200 transition-colors"
+            className="p-1 bg-white rounded-md text-gray-700 hover:bg-gray-100 transition-colors shadow-sm"
             onClick={() => setShowNewTaskModal(true)}
           >
             <Plus size={16} />
@@ -115,7 +109,7 @@ const TaskPanel = ({ status, tasks, moveTask, setShowNewTaskModal }: TaskPanelPr
       </div>
 
       {/* Tasks */}
-      <div className="mt-4 space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto">
+      <div className="mt-2 space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto">
         {tasks
           .filter((task) => task.status === status)
           .map((task) => (
@@ -131,6 +125,9 @@ type TaskProps = {
 };
 
 const Task = ({ task }: TaskProps) => {
+  const [taskControls, setTaskControls] = useState<boolean>(false);
+  const [showEditTask, setShowEditTask] = useState(false);
+
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'task',
     item: { id: task.id },
@@ -140,22 +137,22 @@ const Task = ({ task }: TaskProps) => {
   }));
 
   const taskTagsSplit = task.tags ? task.tags.split(',') : [];
-  const formattedStartDate = task.startDate ? format(new Date(task.startDate), 'P') : '';
-  const formattedDueDate = task.dueDate ? format(new Date(task.dueDate), 'P') : '';
+  const formattedStartDate = task.startDate ? format(new Date(task.startDate), 'MMM dd') : '';
+  const formattedDueDate = task.dueDate ? format(new Date(task.dueDate), 'MMM dd') : '';
   const numberOfComments = (task.userComments && task.userComments.length) || 0;
 
   const PriorityTag = ({ priority }: { priority: TaskType['priority'] }) => (
     <div
-      className={`rounded-full px-2 py-1 text-xs font-medium ${
+      className={`rounded-full px-2 py-0.5 text-xs font-medium ${
         priority === 'Urgent'
-          ? 'bg-red-100 text-red-700'
+          ? 'bg-red-100 text-red-600'
           : priority === 'High'
-          ? 'bg-yellow-100 text-yellow-700'
+          ? 'bg-yellow-100 text-yellow-600'
           : priority === 'Medium'
-          ? 'bg-green-100 text-green-700'
+          ? 'bg-green-100 text-green-600'
           : priority === 'Low'
-          ? 'bg-blue-100 text-blue-700'
-          : 'bg-gray-100 text-gray-700'
+          ? 'bg-blue-100 text-blue-600'
+          : 'bg-gray-100 text-gray-600'
       }`}
     >
       {priority}
@@ -165,10 +162,30 @@ const Task = ({ task }: TaskProps) => {
   return (
     <div
       ref={drag}
-      className={`rounded-lg bg-white shadow-md p-4 transition-all duration-200 ${
-        isDragging ? 'opacity-50 scale-95' : 'opacity-100 hover:shadow-lg'
+      className={`relative rounded-md bg-white border border-gray-200 p-3 transition-all duration-300 ${
+        isDragging ? 'opacity-50 scale-95' : 'opacity-100 hover:shadow-md'
       }`}
     >
+      <EditTaskPopup
+        isOpen={showEditTask}
+        onClose={() => setShowEditTask(false)}
+        taskDetails={task}
+      />
+
+      {taskControls && (
+        <ul className="absolute top-8 right-2 z-40 p-2 bg-white border border-gray-200 rounded-md shadow-md w-28">
+          <li
+            onClick={() => setShowEditTask(true)}
+            className="p-1 text-sm text-gray-700 hover:bg-gray-100 rounded cursor-pointer"
+          >
+            Edit
+          </li>
+          <li className="p-1 text-sm text-gray-700 hover:bg-gray-100 rounded cursor-pointer">
+            Delete
+          </li>
+        </ul>
+      )}
+
       {/* Task Attachment */}
       {task.attachments && task.attachments.length > 0 && (
         <Image
@@ -176,35 +193,38 @@ const Task = ({ task }: TaskProps) => {
           alt={task.attachments[0].fileName}
           width={400}
           height={200}
-          className="w-full h-32 object-cover rounded-t-md mb-3"
+          className="w-full h-28 object-cover rounded-md mb-3"
         />
       )}
 
       {/* Task Content */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         {/* Tags and Priority */}
-        <div className="flex items-start justify-between">
-          <div className="flex flex-wrap gap-2">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-wrap gap-1.5">
             {task.priority && <PriorityTag priority={task.priority} />}
             {taskTagsSplit.map((tag) => (
               <span
                 key={tag}
-                className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full"
+                className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full"
               >
                 {tag}
               </span>
             ))}
           </div>
-          <button className="text-gray-500 hover:text-gray-700 transition-colors">
-            <EllipsisVertical size={20} />
+          <button
+            onClick={() => setTaskControls((prev) => !prev)}
+            className="text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            <EllipsisVertical size={18} />
           </button>
         </div>
 
         {/* Task Name and Points */}
         <div className="flex justify-between items-center">
-          <h4 className="text-md font-semibold text-gray-800">{task.taskName}</h4>
+          <h4 className="text-sm font-semibold text-gray-800">{task.taskName}</h4>
           {typeof task.points === 'number' && (
-            <span className="text-xs font-medium text-gray-500">{task.points} pts</span>
+            <span className="text-xs text-gray-500">{task.points} pts</span>
           )}
         </div>
 
@@ -227,29 +247,35 @@ const Task = ({ task }: TaskProps) => {
 
         {/* Assignees and Comments */}
         <div className="flex items-center justify-between">
-          <div className="flex -space-x-2">
+          <div className="flex items-center gap-2">
             {task.assignedTo && (
-              <Image
-                src={task.assignedTo.profileAvatarUrl || '/default-avatar.png'}
-                alt={task.assignedTo.userName}
-                width={32}
-                height={32}
-                className="h-8 w-8 rounded-full border-2 border-white object-cover"
-              />
+              <div className="flex items-center gap-1">
+                <Image
+                  src={task.assignedTo.profileAvatarUrl || '/default-avatar.png'}
+                  alt={task.assignedTo.userName}
+                  width={24}
+                  height={24}
+                  className="h-6 w-6 rounded-full border border-gray-200 object-cover"
+                />
+                <span className="text-xs text-gray-700">{task.assignedTo.userName}</span>
+              </div>
             )}
             {task.createdTask && (
-              <Image
-                src={task.createdTask.profileAvatarUrl || '/default-avatar.png'}
-                alt={task.createdTask.userName}
-                width={32}
-                height={32}
-                className="h-8 w-8 rounded-full border-2 border-white object-cover"
-              />
+              <div className="flex items-center gap-1">
+                <Image
+                  src={task.createdTask.profileAvatarUrl || '/default-avatar.png'}
+                  alt={task.createdTask.userName}
+                  width={24}
+                  height={24}
+                  className="h-6 w-6 rounded-full border border-gray-200 object-cover"
+                />
+                <span className="text-xs text-gray-700">{task.createdTask.userName}</span>
+              </div>
             )}
           </div>
           <div className="flex items-center text-gray-500">
-            <MessageSquareMore size={18} />
-            <span className="ml-1 text-sm">{numberOfComments}</span>
+            <MessageSquareMore size={16} />
+            <span className="ml-1 text-xs">{numberOfComments}</span>
           </div>
         </div>
       </div>

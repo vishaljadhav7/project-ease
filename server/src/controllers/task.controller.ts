@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Task } from "@prisma/client";
 import ApiResponse from "../utils/ApiResponse";
 import ApiError from "../utils/ApiError";
 // import { Status, Priority } from "@prisma/client";
 const prisma = new PrismaClient();
 
-interface projectRef {
+type projectRef = {
     projectId : string
 }
 
@@ -28,8 +28,8 @@ enum Status {
 interface taskRequirements {
     taskName : string;
     description : string;
-    status : string;
-    priority : string;
+    status : Status;
+    priority : Priority;
     tags? : string;
     startDate : Date;
     dueDate : Date;
@@ -39,16 +39,9 @@ interface taskRequirements {
     assignedToId : string;
 }
 
-interface taskStatus {
-  status : string;
-}
-
-
 export const fetchAllTasks =  async (req: Request<{},{},{}, projectRef>, res: Response): Promise<void> => {
   try {
     const {projectId} = req.query;
-
-
 
     const projectExist  = await prisma.project.findUnique({ 
       where : { id : projectId},
@@ -72,6 +65,8 @@ export const fetchAllTasks =  async (req: Request<{},{},{}, projectRef>, res: Re
 
     const statusCode = error instanceof ApiError ? error.statusCode : 500;
     res.status(statusCode).json(new ApiError(statusCode, error.message));
+  }finally {
+    await prisma.$disconnect(); // Ensure Prisma client disconnects
   }
 }
 
@@ -80,7 +75,6 @@ export const createTask = async (req: Request<{}, {}, taskRequirements>, res: Re
      const taskDetails = req.body;
      const {projectId, createdById, assignedToId} = taskDetails;
 
-    console.log("(createTask) =>>>  projectId createdById", projectId, createdById)
      const projectExist  = await prisma.project.findUnique({ where : { id : projectId} })
      if(!projectExist){
       throw new Error("projectId does not exist !");
@@ -105,13 +99,11 @@ export const createTask = async (req: Request<{}, {}, taskRequirements>, res: Re
      }
 
      const {taskName, description, status, priority, tags, startDate, dueDate, points} = taskDetails;
-   
-     console.log("{taskName, description, status, priority, tags, startDate, dueDate, points}  =>>>> ", {taskName, description, status, priority, tags, startDate, dueDate, points} )
      
      const newTask = await prisma.task.create({
       data: {
-        //@ts-ignore
-        taskName, description, status , priority, startDate, dueDate, points,
+      
+        taskName, description, status, priority, startDate, dueDate, points,
         projectId, createdById, assignedToId},
     }, );
 
@@ -125,13 +117,15 @@ export const createTask = async (req: Request<{}, {}, taskRequirements>, res: Re
     } catch (error : any) {  
       console.log("(createTask) =>>>  ", error.message)
       res.status(400).json(new ApiError(400, error.message));
+    } finally {
+      await prisma.$disconnect(); 
     }
   }
   
 
 export const modifyTaskStatus = async (req: Request<{taskId : string}, {}>, res: Response): Promise<void> => {
     try {
-     const { taskId } = req.params;
+     const {taskId} = req.params;
      const {status} = req.body;
 
      const taskExist = await prisma.task.update({
@@ -154,7 +148,43 @@ export const modifyTaskStatus = async (req: Request<{taskId : string}, {}>, res:
       const statusCode = error instanceof ApiError ? error.statusCode : 500;
       res.status(statusCode).json(new ApiError(statusCode, error.message));
     }
+    finally {
+      await prisma.$disconnect(); 
+    }
 }
+
+
+export const editTask = async (req: Request<{taskId : string}, {}, Partial<Task>>, res: Response): Promise<void> => {
+  try {
+    const editDetails = req.body;
+    const {taskId} = req.params;
+
+    if(!editDetails) throw new Error("Edit details not available!");
+   
+    const allowedEditFields = ["taskName", "assignedToId", "description", "points", "priority", "status", "projectId", "startDate" , "dueDate", "tags"]
+    
+    const isValid = Object.keys(editDetails).every((item) =>  allowedEditFields.includes(item));
+    
+    if(!isValid) throw new Error("Invalid edit field not allowed");
+
+    const updatedTask = await prisma.task.update({
+      where: {
+        id: taskId,
+      },
+      data: {
+        ...editDetails
+      },
+    })
+
+   res.status(200).json(new ApiResponse(200, updatedTask, "task updated successfully")) 
+  } catch (error : any) {
+    console.log("(editTask) ==>> ", error , error.message)
+    res.status(400).json(new ApiError(400, `Could not update the task : Error ${error.message}`)) 
+  } finally {
+    prisma.$disconnect()
+  }
+}
+
 
 export const fetchUserTasks = async (
     req: Request<{userId : string}>,
@@ -162,12 +192,6 @@ export const fetchUserTasks = async (
   ): Promise<void> => {
     try {
        const {userId} = req.params;
-
-       const userExist = await prisma.user.findUnique({where : {id : userId}});
-       
-       if(!userExist){
-        throw new Error("user not found for tasks to fetch!")
-       }
 
        const allTasks = await prisma.task.findMany({
         where : {
@@ -189,5 +213,8 @@ export const fetchUserTasks = async (
       const statusCode = error instanceof ApiError ? error.statusCode : 500;
    
       res.status(statusCode).json(new ApiError(statusCode, error.message));
+    } finally {
+      await prisma.$disconnect(); 
     }
 }
+

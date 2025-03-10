@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Project } from '@/features/api';
 import { usePathname } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/Redux/store';
@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { toggleSidebarView } from '@/features/status/statusSlice';
 import { useFetchAllProjectsQuery } from '@/features/api';
+import { addProjects } from '@/features/data/dataSlice';
 
 const Sidebar = () => {
   const dispatch = useAppDispatch();
@@ -34,7 +35,12 @@ const Sidebar = () => {
   const [showProjects, setShowProjects] = useState(false);
   const [showPriority, setShowPriority] = useState(false);
   const { data: projects, isLoading, isError } = useFetchAllProjectsQuery();
-  const pathname = usePathname();
+
+  useEffect(()=>{
+    if(projects){
+      dispatch(addProjects(projects)) 
+    }
+  }, [projects, dispatch])
 
   return (
     <div

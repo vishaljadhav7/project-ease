@@ -15,38 +15,37 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const prisma = new client_1.PrismaClient();
-function authMiddleWare(req, res, next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        // Get the authorization header
-        const authHeader = req.headers['authorization'] || req.cookies.token;
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return res.status(401).send('Unauthorized');
+const authMiddleWare = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const authHeader = req.headers["authorization"] || req.cookies.token;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        res.status(401).json({ success: false, message: "Unauthorized" });
+        return;
+    }
+    const token = authHeader.split(" ")[1];
+    if (!token) {
+        res.status(401).json({ success: false, message: "No token provided" });
+        return;
+    }
+    try {
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY);
+        if (!decoded.userId) {
+            res.status(401).json({ success: false, message: "Invalid token" });
+            return;
         }
-        // Extract the token
-        const token = authHeader.split(' ')[1];
-        if (!token) {
-            return res.status(401).send('No token provided');
+        const userInfo = yield prisma.user.findUnique({ where: { id: decoded.userId } });
+        if (!userInfo) {
+            res.status(401).json({ success: false, message: "Invalid token: User not found" });
+            return;
         }
-        try {
-            const decoded = jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY);
-            if (typeof decoded === 'object' && 'id' in decoded) {
-                const userInfo = yield prisma.user.findUnique({ where: { id: decoded.id } });
-                if (!userInfo)
-                    throw new Error("not a vaild token!");
-                req.user = decoded;
-                next();
-            }
-            else {
-                return res.status(401).send('Invalid token');
-            }
-        }
-        catch (error) {
-            console.error('Token Verification Middleware Error:', error.message);
-            return res.status(500).json({
-                success: false,
-                message: 'Internal Server Error: ' + error.message,
-            });
-        }
-    });
-}
+        req.user = { id: decoded.userId };
+        next();
+    }
+    catch (error) {
+        console.error("Token Verification Middleware Error:", error.message);
+        res.status(401).json({
+            success: false,
+            message: `Invalid token: ${error.message}`,
+        });
+    }
+});
 exports.default = authMiddleWare;

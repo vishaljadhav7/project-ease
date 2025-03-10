@@ -18,14 +18,32 @@ const ApiError_1 = __importDefault(require("../utils/ApiError"));
 const ApiResponse_1 = __importDefault(require("../utils/ApiResponse"));
 const prisma = new client_1.PrismaClient();
 const fetchAllProjects = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
-        const projects = yield prisma.project.findMany();
+        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+        const projects = yield prisma.project.findMany({
+            where: {
+                tasks: {
+                    every: {
+                        OR: [{
+                                assignedToId: userId
+                            }, {
+                                createdById: userId
+                            }]
+                    },
+                }
+            },
+            include: {
+                tasks: true
+            }
+        });
         res.status(201).json(new ApiResponse_1.default(201, projects, "all projects retrieved"));
     }
     catch (error) {
-        const statusCode = error instanceof ApiError_1.default ? error.statusCode : 500;
-        const message = error instanceof ApiError_1.default ? error.message : `Server error: ${error.message}`;
-        res.status(statusCode).json(new ApiError_1.default(statusCode, message));
+        res.status(400).json(new ApiError_1.default(400, error.message));
+    }
+    finally {
+        yield prisma.$disconnect();
     }
 });
 exports.fetchAllProjects = fetchAllProjects;
@@ -38,9 +56,10 @@ const createProject = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(201).json(new ApiResponse_1.default(201, newProject, "new project created"));
     }
     catch (error) {
-        const statusCode = error instanceof ApiError_1.default ? error.statusCode : 500;
-        const message = error instanceof ApiError_1.default ? error.message : `Server error: ${error.message}`;
-        res.status(statusCode).json(new ApiError_1.default(statusCode, message));
+        res.status(400).json(new ApiError_1.default(400, error.message));
+    }
+    finally {
+        yield prisma.$disconnect();
     }
 });
 exports.createProject = createProject;

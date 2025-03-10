@@ -29,23 +29,23 @@ function deleteAllData(orderedFileNames) {
                 console.log(`Cleared data from ${modelName}`);
             }
             catch (error) {
-                console.error(`Error clearing data from ${modelName}:`, error);
+                console.error(`Error clearing data from ${modelName}:`, error.message);
             }
         }
     });
 }
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        const dataDirectory = path_1.default.join(__dirname, "seedData");
+        const dataDirectory = path_1.default.join(__dirname, "seedData3");
         const orderedFileNames = [
-            "team.json",
-            "project.json",
-            "projectTeam.json",
             "user.json",
+            "project.json",
             "task.json",
+            "team.json",
+            "projectTeam.json",
+            "taskAssignments.json",
             "uploadedFiles.json",
             "userComments.json",
-            "taskAssignments.json",
         ];
         yield deleteAllData(orderedFileNames);
         for (const fileName of orderedFileNames) {
@@ -61,7 +61,7 @@ function main() {
                 console.log(`Seeded ${modelName} with data from ${fileName}`);
             }
             catch (error) {
-                console.error(`Error seeding data for ${modelName}:`, error);
+                console.error(`Error seeding data for ${modelName}:`, error.message);
             }
         }
     });

@@ -5,22 +5,17 @@ import jwt from "jsonwebtoken";
 import ApiResponse from "../utils/ApiResponse";
 import ApiError from "../utils/ApiError";
 
-
 const prisma = new PrismaClient();
 
 function generateJWT (id : string) {
   const secretKey = process.env.SECRET_KEY;
-  
   if (!secretKey) {
     throw new Error('JWT secret key is not configured');
   }
-
   return jwt.sign({ userId : id }, secretKey, {
     expiresIn: '1h', 
   });
 }
-
-interface FetchUserParams {userId: string;}
 
 interface RegisterUserBody {
     emailId: string;
@@ -44,12 +39,13 @@ export const fetchAllUsers = async (req : Request, res : Response) : Promise<voi
    
  } catch (error : any) {
   res.status(401).json(new ApiError(401, error.message));
+ } finally {
+  prisma.$disconnect()
 }
 }
 
 
-export const fetchUser = async (req : Request<FetchUserParams>, res : Response) => {
-
+export const fetchUser = async (req : Request, res : Response) => {
     try {
       const userId = req.params?.userId
       const user = await prisma.user.findUnique({
@@ -74,13 +70,14 @@ export const fetchUser = async (req : Request<FetchUserParams>, res : Response) 
 
     } catch (error : any) {
       res.status(401).json(new ApiError(401, error.message));
+    } finally {
+      await prisma.$disconnect(); 
     }
 }
 
 export const registerUser = async (req : Request<{}, {}, RegisterUserBody>, res : Response) : Promise<void> => {
     try {
       const {emailId, password, userName, profileAvatarUrl, teamId} : RegisterUserBody =  req.body;
-
 
       const userExist = await prisma.user.findUnique({where : {emailId : emailId}})
      
@@ -89,17 +86,23 @@ export const registerUser = async (req : Request<{}, {}, RegisterUserBody>, res 
       }
 
       const hashedPassword = await bcrypt.hash(password, 10)
-   
-
-      const newUser = await prisma.user.create({
+  
+      const registerUser = await prisma.user.create({
         data: {emailId, password : hashedPassword, userName , profileAvatarUrl, teamId},
       });
 
-      if (!newUser) {
+      if (!registerUser) {
         throw new Error("user could not be registered!") 
       }
 
-      const token = generateJWT(newUser.id) ;
+      const token = generateJWT(registerUser.id) ;
+      const newUser = {
+        id : registerUser.id,
+        emailId : registerUser.emailId,
+        userName : registerUser.userName,
+        teamId : registerUser?.teamId,
+        profileAvatarUrl : registerUser.profileAvatarUrl
+      }
       
       const serverResponse = new ApiResponse(200, newUser, "user registered successfully");
 
@@ -107,6 +110,8 @@ export const registerUser = async (req : Request<{}, {}, RegisterUserBody>, res 
 
     } catch (error : any) {
       res.status(400).json(new ApiError(400, error.message));
+    } finally {
+      await prisma.$disconnect(); 
     }
 }
 
@@ -114,20 +119,28 @@ export const signInUser = async (req : Request<{}, {}, {emailId : string, passwo
   try {
     const {emailId , password} = req.body;
 
-    const userExist = await prisma.user.findUnique({where : {emailId}})
+    const userData = await prisma.user.findUnique({where : {emailId}})
 
-    if (!userExist) {
+    if (!userData) {
       throw new Error("invalid credentials!") 
     }
     
-    const isPasswordValid = await bcrypt.compare(password, userExist.password);
+    const isPasswordValid = await bcrypt.compare(password, userData.password);
 
     if(!isPasswordValid){
       throw new Error("invalid credentials!") 
     }
     
-    const token = generateJWT(userExist.id);
+    const token = generateJWT(userData.id);
       
+   const userExist  = {
+    id : userData.id,
+    emailId : userData.emailId,
+    userName : userData.userName,
+    teamId : userData?.teamId,
+    profileAvatarUrl : userData.profileAvatarUrl
+   }
+    
     const serverResponse = new ApiResponse(200, userExist, "User signed in successfully");
 
     res
@@ -136,7 +149,19 @@ export const signInUser = async (req : Request<{}, {}, {emailId : string, passwo
       .json({ serverResponse, token });
 
   } catch (error : any) {
+    res.status(400).json(new ApiError(400, error.message));
+  } finally {
+    await prisma.$disconnect(); 
+  }
+}
 
+export const signOut = async (req : Request, res : Response) => {
+  try {
+     res
+     .status(200)
+     .clearCookie("token")
+     .json(new ApiResponse(200, {}, "User has logged Out"))
+  } catch (error : any) {
     res.status(400).json(new ApiError(400, error.message));
   }
 }

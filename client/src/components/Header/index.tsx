@@ -8,11 +8,9 @@ type Props = {
 
 const Header = ({ name, buttonComponent }: Props) => {
   return (
-    <div className="mb-5 flex w-full items-center justify-between px-4">
-      <h1
-        className={`text-2xl text-black font-semibold `}
-      >
-        {name}   
+    <div className="mb-6 flex w-full items-center justify-between px-6">
+      <h1 className="text-2xl text-gray-800 font-semibold tracking-tight">
+        {name}
       </h1>
       {buttonComponent}
     </div>

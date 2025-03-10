@@ -2,10 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
 
-// Initialize Prisma client
 const prisma = new PrismaClient();
 
-// Define User interface (adjust fields as needed based on your Prisma schema)
 interface User {
   id: string;
   userName?: string; // Optional fields from your user.json
@@ -42,21 +40,21 @@ const authMiddleWare = async (
 
   try {
   
-    const decoded = jwt.verify(token, process.env.SECRET_KEY!) as { id: string };
+    const decoded = jwt.verify(token, process.env.SECRET_KEY!) as { userId: string };
 
- 
-    if (!decoded.id) {
+    if (!decoded.userId) {
       res.status(401).json({ success: false, message: "Invalid token" });
       return;
     }
 
-    const userInfo = await prisma.user.findUnique({ where: { id: decoded.id } });
+    const userInfo = await prisma.user.findUnique({ where: { id: decoded.userId } });
+
     if (!userInfo) {
       res.status(401).json({ success: false, message: "Invalid token: User not found" });
       return;
     }
 
-    req.user = { id: decoded.id }; 
+    req.user = { id: decoded.userId }; 
     next();
   } catch (error: any) {
     console.error("Token Verification Middleware Error:", error.message);

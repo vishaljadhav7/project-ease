@@ -14,14 +14,31 @@ interface projectRequirements {
 
 export const fetchAllProjects = async (req :Request, res : Response) : Promise<void> => {
   try {
-
-    const projects = await prisma.project.findMany();
+   const userId = req.user?.id
+    const projects = await prisma.project.findMany({
+      where : {
+        tasks : {
+          every : {
+            OR : [{
+              assignedToId : userId
+            }, {
+              createdById : userId
+            }]
+          },
+        }
+      },
+      include: {
+        tasks : true
+      }   
+    });
+    
     res.status(201).json(new ApiResponse(201, projects, "all projects retrieved")) 
   
   } catch (error : any) {
     res.status(400).json(new ApiError(400, error.message));
-  
- }
+  } finally {
+    await prisma.$disconnect(); 
+  }
 }
 
 export const createProject = async (req :Request<{}, {}, projectRequirements>, res : Response) : Promise<void> => {
@@ -36,5 +53,7 @@ export const createProject = async (req :Request<{}, {}, projectRequirements>, r
     
     } catch (error : any) {
       res.status(400).json(new ApiError(400, error.message));
-   }
+    } finally {
+      await prisma.$disconnect(); 
+    }
   }

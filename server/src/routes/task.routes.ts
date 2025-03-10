@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { body, param } from "express-validator";
-import { createTask, fetchAllTasks, fetchUserTasks, modifyTaskStatus } from "../controllers/task.controller";
+import { createTask, editTask, fetchAllTasks, fetchUserTasks, modifyTaskStatus } from "../controllers/task.controller";
 import authMiddleWare from "../middlewares/verifyUser";
 
 const taskRouter = Router();
@@ -20,7 +20,7 @@ const Status = {
  Completed : "Completed",
 }
 
-taskRouter.get("/tasks", fetchAllTasks);
+taskRouter.get("/tasks", authMiddleWare , fetchAllTasks);
 
 
 taskRouter.post("/create-task", [
@@ -57,6 +57,25 @@ taskRouter.get("/tasks/user/:userId",
     authMiddleWare,
     fetchUserTasks
 );
+
+taskRouter.patch("/edit-task/:taskId", [
+  param('taskId').isUUID().withMessage("task id required"),
+  body('taskName').isString().isLength({min : 3}).withMessage("task name must be at least 3 characters long"),
+  body('description').isString().isLength({min : 6}).withMessage("task name must be at least 6 characters long"),
+  body('status').isIn(Object.values(Status)).withMessage("invalid status"),
+  body('priority').isIn(Object.values(Priority)).withMessage("invalid status"),
+  body('tags').isLength({min:3}).isString().optional(),
+  body('startDate').isDate().withMessage('start date is required'),
+  body('dueDate').isDate().withMessage('due Date is required'),
+  body('points').isNumeric().optional(),
+  body('projectId').isUUID().withMessage("project id required"),
+  body('createdById').isUUID().withMessage("createdBy id required"),
+  body('assignedToId').isUUID().withMessage("assignedTo id required")
+ ] , 
+ authMiddleWare,
+ editTask
+ );
+
 
 
 export default taskRouter;

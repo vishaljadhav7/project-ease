@@ -7,16 +7,16 @@ import { useAppSelector } from "@/Redux/store";
 
 // Define interfaces for type safety
 interface TaskFormData {
-  taskName: string;
+  taskName: string;     
   description: string;
   status: Status;
   priority: Priority;
   tags: string;
   startDate: Date;
   dueDate: Date;
-  createdById: string;
+  createdById: string | undefined;
   assignedToId: string;
-  projectId: string;
+  projectId: string;   
 }
 
 interface Props {
@@ -25,8 +25,9 @@ interface Props {
   id: string ;
 }
 
+
 export default function NewTaskPopup({ isOpen, onClose, id }: Props): React.ReactNode {
-  const userId = useAppSelector(store=>store.user.userInfo?.id)
+  const userId = useAppSelector(store => store.user.userInfo?.id)
   const [createTask, { isLoading }] = useCreateTaskMutation();
 
   const [formData, setFormData] = useState<TaskFormData>({

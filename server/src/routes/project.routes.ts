@@ -5,7 +5,7 @@ import authMiddleWare from '../middlewares/verifyUser';
 
 const projectRouter = Router();
 
-projectRouter.get("/projects",authMiddleWare,fetchAllProjects);
+projectRouter.get("/projects", authMiddleWare, fetchAllProjects);
   
 projectRouter.post("/create-project",  
     [

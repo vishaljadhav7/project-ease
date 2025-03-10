@@ -87,14 +87,11 @@ export interface Project {
     baseQuery: fetchBaseQuery({
       baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
       prepareHeaders: (headers, { getState }) => {
-        // Retrieve token from localStorage
+       
         const token = localStorage.getItem("token");
-  
-        // If token exists, set it in the Authorization header
         if (token) {
           headers.set("Authorization", `Bearer ${token}`);
         }  
-        // Optionally set other headers (e.g., Content-Type)
         headers.set("Content-Type", "application/json");
 
         return headers;
@@ -128,13 +125,18 @@ export interface Project {
                 { type: "Tasks" as const, id: `project-${projectId}` }, // Project-specific tag
               ]
             : [{ type: "Tasks" as const, id: `project-${projectId}` }],
+       
        }),   
 
       fetchAllTasksOfUser : build.query<Task[], {userId : string}>({
          query : ({userId}) => `/tasks/user/${userId}`,
+         transformResponse : (results : any) => {
+          console.log(results)
+          return results
+         },
          providesTags : ((result, error, {userId}) => (
              result
-             ? result?.data.tasks.map(({ id } : { id: string }) => ({ type: "Tasks", id }))
+             ? result?.data.map(({ id } : { id: string }) => ({ type: "Tasks", id }))
              : [{ type: "Tasks", id: userId }] 
          )),
        }),
@@ -157,8 +159,23 @@ export interface Project {
             body : {status},
           }),
           invalidatesTags : (results, error, {taskId}) => [ {type : "Tasks", id : taskId} ]
-      }),      
-        
+      }),   
+
+      editTask: build.mutation<Task, { taskId: string; taskDetails: Partial<Task> }>({
+        query: ({ taskId, taskDetails }) => ({
+          url: `/edit-task/${taskId}`,
+          method: "PATCH",
+          body: taskDetails,
+        }),
+        transformResponse: (response: any) => {
+          console.log( "(transformResponse from editTask rtk) ====>>>>" , response);
+          return response
+        },
+        invalidatesTags: (result, error, { taskDetails }) => [
+          { type: "Tasks" as const, id: `project-${taskDetails.projectId}` },
+        ],
+      }), 
+      
       getUsers: build.query<User[], void>({
        query: () => "users",
        providesTags: ["Users"] ,
@@ -172,6 +189,13 @@ export interface Project {
       search: build.query<SearchResults, string>({
         query: (query) => `search?query=${query}`,
       }),
+
+      logout : build.mutation<void, void>({
+        query : () => ({
+          url : "/signout",
+          method : "POST"
+        })
+      })
     })
  });
  
@@ -184,5 +208,7 @@ export interface Project {
    useFetchAllTasksOfUserQuery,
    useGetTeamsQuery,
    useGetUsersQuery,
-   useSearchQuery
+   useSearchQuery,
+   useEditTaskMutation,
+   useLogoutMutation
  } = api

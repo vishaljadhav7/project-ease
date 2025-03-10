@@ -1,18 +1,31 @@
 'use client';
 
-import { Search, Settings, Menu } from 'lucide-react';
+import { Search, LogOut, Menu } from 'lucide-react';
 import Link from 'next/link';
 import { RootState } from '@/Redux/store';
 import { useAppDispatch, useAppSelector } from '@/Redux/store';
 import { toggleSidebarView } from '@/features/status/statusSlice';
+import { removeUser } from '@/features/user/userSlice';
+import axios from 'axios';
+import {useLogoutMutation} from '@/features/api';
 
 const Navbar = () => {
   const dispatch = useAppDispatch();
   const { isSidebarCollapsed } = useAppSelector((state: RootState) => state.global);
+  const [logout] = useLogoutMutation()
+
+  const handleLogout = async () => {
+    try {
+      await logout().unwrap();
+      dispatch(removeUser())
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   return (
     <div className="flex items-center justify-between px-6 py-3 w-full bg-gradient-to-r from-gray-800 to-gray-900 shadow-lg">
-      {/* Left Section: Menu Toggle and Search */}
+   
       <div className="flex items-center gap-6">
         {isSidebarCollapsed && (
           <button
@@ -33,15 +46,9 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Right Section: Settings */}
+   
       <div className="flex items-center gap-6">
-        <Link
-          href="/settings"
-          className="p-2 rounded-full text-gray-200 hover:bg-gray-700 hover:text-white transition-all duration-200"
-          aria-label="Settings"
-        >
-          <Settings className="h-6 w-6" />
-        </Link>
+          <LogOut className="h-6 w-6 text-white cursor-pointer hover:scale-110" onClick={handleLogout}/>
       </div>
     </div>
   );

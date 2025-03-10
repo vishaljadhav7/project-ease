@@ -1,12 +1,12 @@
 import React from 'react'
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useFetchAllTasksQuery } from '@/features/api';
+import { Task} from '@/features/api';
 import Header from '@/components/Header';
 import { dataGridClassNames, dataGridSxStyles } from "@/lib/utils";
 
 type TableViewProps = {
-  id : string,
   setShowNewTaskModal : (isOpen: boolean) => void
+  tasks : Task[]
 }
 
 const columns: GridColDef[] = [
@@ -64,16 +64,8 @@ const columns: GridColDef[] = [
   },
 ];
 
-export default function TableView({id, setShowNewTaskModal}: TableViewProps) {
+export default function TableView({setShowNewTaskModal, tasks}: TableViewProps) {
  
-  const {
-    data,
-    error,
-    isLoading,
-  } = useFetchAllTasksQuery({ projectId: Number(id) });
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>An error occurred while fetching tasks</div>;
 
   return (
     <div className='h-[540px] w-full px-4 pb-8 xl:px-6'>
@@ -93,7 +85,7 @@ export default function TableView({id, setShowNewTaskModal}: TableViewProps) {
         />
       </div>
       <DataGrid
-        rows={data?.data.tasks || []}
+        rows={tasks || []}
         columns={columns}
         className={dataGridClassNames}
         sx={dataGridSxStyles()}

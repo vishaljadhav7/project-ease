@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.signInUser = exports.registerUser = exports.fetchUser = exports.fetchAllUsers = void 0;
+exports.signOut = exports.signInUser = exports.registerUser = exports.fetchUser = exports.fetchAllUsers = void 0;
 const client_1 = require("@prisma/client");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -30,9 +30,9 @@ function generateJWT(id) {
 }
 const options = {
     httpOnly: true,
-    secure: true,
-    sameSite: 'strict',
-    maxAge: 1000 * 60 * 60, // 1 hour in milliseconds
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 1000 * 60 * 60 * 24 // 1 day
 };
 const fetchAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -40,9 +40,10 @@ const fetchAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(201).json(new ApiResponse_1.default(201, users, "all users retrieved"));
     }
     catch (error) {
-        const statusCode = error instanceof ApiError_1.default ? error.statusCode : 500;
-        const message = error instanceof ApiError_1.default ? error.message : `Server error: ${error.message}`;
-        res.status(statusCode).json(new ApiError_1.default(statusCode, message));
+        res.status(401).json(new ApiError_1.default(401, error.message));
+    }
+    finally {
+        prisma.$disconnect();
     }
 });
 exports.fetchAllUsers = fetchAllUsers;
@@ -52,7 +53,7 @@ const fetchUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const userId = (_a = req.params) === null || _a === void 0 ? void 0 : _a.userId;
         const user = yield prisma.user.findUnique({
             where: {
-                id: Number(userId)
+                id: userId
             }
         });
         if (!user) {
@@ -68,10 +69,10 @@ const fetchUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(201).json(new ApiResponse_1.default(201, {}, "user retrieved successfully"));
     }
     catch (error) {
-        console.log("error.message ->>>>> ", error.message, "     ", error);
-        const statusCode = error instanceof ApiError_1.default ? error.statusCode : 500;
-        const message = error instanceof ApiError_1.default ? error.message : `Server error: ${error.message}`;
-        res.status(statusCode).json(new ApiError_1.default(statusCode, message));
+        res.status(401).json(new ApiError_1.default(401, error.message));
+    }
+    finally {
+        yield prisma.$disconnect();
     }
 });
 exports.fetchUser = fetchUser;
@@ -83,42 +84,77 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             throw new Error("user already registered!");
         }
         const hashedPassword = yield bcrypt_1.default.hash(password, 10);
-        const newUser = yield prisma.user.create({
+        const registerUser = yield prisma.user.create({
             data: { emailId, password: hashedPassword, userName, profileAvatarUrl, teamId },
         });
-        if (!newUser) {
+        if (!registerUser) {
             throw new Error("user could not be registered!");
         }
-        const token = generateJWT(newUser.id);
+        const token = generateJWT(registerUser.id);
+        const newUser = {
+            id: registerUser.id,
+            emailId: registerUser.emailId,
+            userName: registerUser.userName,
+            teamId: registerUser === null || registerUser === void 0 ? void 0 : registerUser.teamId,
+            profileAvatarUrl: registerUser.profileAvatarUrl
+        };
         const serverResponse = new ApiResponse_1.default(200, newUser, "user registered successfully");
         res.status(201).json({ serverResponse, "token": token }).cookie("token", token, options);
     }
     catch (error) {
-        const statusCode = error instanceof ApiError_1.default ? error.statusCode : 500;
-        const message = error instanceof ApiError_1.default ? error.message : `Server error: ${error.message}`;
-        res.status(statusCode).json(new ApiError_1.default(statusCode, message));
+        res.status(400).json(new ApiError_1.default(400, error.message));
+    }
+    finally {
+        yield prisma.$disconnect();
     }
 });
 exports.registerUser = registerUser;
 const signInUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { emailId, password } = req.body;
-        const userExist = yield prisma.user.findUnique({ where: { emailId: emailId } });
-        if (!userExist) {
+        const userData = yield prisma.user.findUnique({ where: { emailId } });
+        if (!userData) {
             throw new Error("invalid credentials!");
         }
-        const isPasswordValid = bcrypt_1.default.compare(password, userExist.password);
+        const isPasswordValid = yield bcrypt_1.default.compare(password, userData.password);
         if (!isPasswordValid) {
             throw new Error("invalid credentials!");
         }
-        const token = generateJWT(userExist.id);
-        const serverResponse = new ApiResponse_1.default(200, userExist, "user signed in successfully");
-        res.status(201).json({ serverResponse, "token": token }).cookie("token", token, options);
+        const token = generateJWT(userData.id);
+        const userExist = {
+            id: userData.id,
+            emailId: userData.emailId,
+            userName: userData.userName,
+            teamId: userData === null || userData === void 0 ? void 0 : userData.teamId,
+            profileAvatarUrl: userData.profileAvatarUrl
+        };
+        const serverResponse = new ApiResponse_1.default(200, userExist, "User signed in successfully");
+        res
+            .status(200)
+            .cookie("token", token, options)
+            .json({ serverResponse, token });
     }
     catch (error) {
-        const statusCode = error instanceof ApiError_1.default ? error.statusCode : 500;
-        const message = error instanceof ApiError_1.default ? error.message : `Server error: ${error.message}`;
-        res.status(statusCode).json(new ApiError_1.default(statusCode, message));
+        res.status(400).json(new ApiError_1.default(400, error.message));
+    }
+    finally {
+        yield prisma.$disconnect();
     }
 });
 exports.signInUser = signInUser;
+const signOut = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const options = {
+            httpOnly: true,
+            secure: true
+        };
+        return res
+            .status(200)
+            .clearCookie("token", options)
+            .json(new ApiResponse_1.default(200, {}, "User has logged Out"));
+    }
+    catch (error) {
+        res.status(400).json(new ApiError_1.default(400, error.message));
+    }
+});
+exports.signOut = signOut;
