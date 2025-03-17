@@ -23,5 +23,5 @@ userRouter.post("/signin", [
     (0, express_validator_1.body)('emailId').isEmail().withMessage('email is required'),
     (0, express_validator_1.body)('password').isStrongPassword().withMessage('strong password is required'),
 ], user_controller_1.signInUser);
-userRouter.post("/signout", user_controller_1.signOut);
+userRouter.post("/signout", verifyUser_1.default, user_controller_1.signOut);
 exports.default = userRouter;

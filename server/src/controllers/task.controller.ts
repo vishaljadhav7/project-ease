@@ -50,7 +50,6 @@ export const fetchAllTasks =  async (req: Request<{},{},{}, projectRef>, res: Re
           {createdTask : true, 
             assignedTo : true, 
             userComments : true, 
-            uploadedFiles :  true
           }}} 
     })
 
@@ -115,7 +114,7 @@ export const createTask = async (req: Request<{}, {}, taskRequirements>, res: Re
     res.status(201).json(serverResponse)
      
     } catch (error : any) {  
-      console.log("(createTask) =>>>  ", error.message)
+    
       res.status(400).json(new ApiError(400, error.message));
     } finally {
       await prisma.$disconnect(); 
@@ -178,7 +177,7 @@ export const editTask = async (req: Request<{taskId : string}, {}, Partial<Task>
 
    res.status(200).json(new ApiResponse(200, updatedTask, "task updated successfully")) 
   } catch (error : any) {
-    console.log("(editTask) ==>> ", error , error.message)
+  
     res.status(400).json(new ApiError(400, `Could not update the task : Error ${error.message}`)) 
   } finally {
     prisma.$disconnect()

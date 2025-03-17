@@ -10,11 +10,12 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL1")
 }
 
 model User {
   id               String    @id @default(uuid())
+  isAdmin          Boolean   @default(false) 
   userName         String     
   emailId          String     @unique
   password         String
@@ -26,17 +27,15 @@ model User {
   teamId           String?
   team             Team?     @relation(fields: [teamId], references: [id])
 
-  taskAssignments  TaskAssignments[]
-  uploadedFiles    UploadedFiles[]
   userComments     UserComments[]  
+  myProjects       Project[] 
 }
 
 model Team {
    id                    String    @id @default(uuid())
    teamName              String
    users                 User[] 
-   projectTeams          ProjectTeam[]
-   productOwnerUserId    String? 
+   projectTeams          ProjectTeam[] 
    projectManagerUserId  String?
 }
 
@@ -46,19 +45,23 @@ model Project {
    description      String?
    startDate        DateTime?
    endDate          DateTime?
-   tasks            Task[]     @relation("projectTask")
-   projectTeams     ProjectTeam[]   
+
+   projectOwner     User      @relation(fields: [projectOwnerId], references: [id], onDelete: Cascade) 
+   projectOwnerId   String   
+      
+   tasks            Task[]     @relation("projectTask")   
+   projectTeams     ProjectTeam[]  
 }
 
 
 model ProjectTeam {
-  id              String    @id @default(uuid())
+  id              String      @id @default(uuid())
   
   teamId           String
-  team             Team       @relation(fields: [teamId], references: [id])   
+  team             Team       @relation(fields: [teamId], references: [id], onDelete: Cascade)   
 
   projectId        String
-  project          Project    @relation(fields: [projectId], references: [id])            
+  project          Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)            
 }
 
 model Task {
@@ -73,50 +76,27 @@ model Task {
   points           Int?
 
   createdById      String
-  createdTask      User        @relation("createdTasks", fields: [createdById], references: [id])
+  createdTask      User        @relation("createdTasks", fields: [createdById], references: [id], onDelete: Cascade)
   
   assignedToId     String?
-  assignedTo       User?        @relation("assignedTasks", fields: [assignedToId], references: [id])
+  assignedTo       User?        @relation("assignedTasks", fields: [assignedToId], references: [id], onDelete: SetNull)
 
   projectId        String
-  project          Project      @relation("projectTask", fields: [projectId], references: [id])
-
-  taskAssignments  TaskAssignments[]    
-  uploadedFiles    UploadedFiles[]
+  project          Project      @relation("projectTask", fields: [projectId], references: [id], onDelete: Cascade)
+  
   userComments     UserComments[]
 }
  
-model TaskAssignments { 
-  id               String    @id @default(uuid())
-  
-  userId           String
-  user             User       @relation(fields: [userId], references: [id])
-
-  taskId           String
-  task             Task       @relation(fields: [taskId], references: [id])    
-}
-
-model UploadedFiles {
-  id               String     @id @default(uuid())
-  fileUrl          String     @default("https://plus.unsplash.com/premium_photo-1677402408071-232d1c3c3787?q=80&w=1480")
-  fileName         String
-
-  taskId           String
-  task             Task       @relation(fields: [taskId], references: [id]) 
-
-  uploadedById     String     
-  uploadedBy       User       @relation(fields: [uploadedById], references: [id])
-}
-
 model UserComments {
   id               String       @id @default(uuid())
   comment          String
 
   commentById      String
-  commentBy        User         @relation(fields: [commentById], references: [id])
+  commentBy        User         @relation(fields: [commentById], references: [id], onDelete: Cascade)
 
   commentOnTaskId  String
-  commentOnTask    Task         @relation(fields: [commentOnTaskId], references: [id])      
+  commentOnTask    Task         @relation(fields: [commentOnTaskId], references: [id], onDelete: Cascade)      
+  createdAt       DateTime  @default(now())
 }
 
 enum Priority {

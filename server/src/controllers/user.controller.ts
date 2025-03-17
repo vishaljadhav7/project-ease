@@ -101,7 +101,8 @@ export const registerUser = async (req : Request<{}, {}, RegisterUserBody>, res 
         emailId : registerUser.emailId,
         userName : registerUser.userName,
         teamId : registerUser?.teamId,
-        profileAvatarUrl : registerUser.profileAvatarUrl
+        profileAvatarUrl : registerUser.profileAvatarUrl,
+        isAdmin : registerUser.isAdmin
       }
       
       const serverResponse = new ApiResponse(200, newUser, "user registered successfully");
@@ -138,7 +139,8 @@ export const signInUser = async (req : Request<{}, {}, {emailId : string, passwo
     emailId : userData.emailId,
     userName : userData.userName,
     teamId : userData?.teamId,
-    profileAvatarUrl : userData.profileAvatarUrl
+    profileAvatarUrl : userData.profileAvatarUrl,
+    isAdmin : userData.isAdmin
    }
     
     const serverResponse = new ApiResponse(200, userExist, "User signed in successfully");
@@ -149,6 +151,7 @@ export const signInUser = async (req : Request<{}, {}, {emailId : string, passwo
       .json({ serverResponse, token });
 
   } catch (error : any) {
+ 
     res.status(400).json(new ApiError(400, error.message));
   } finally {
     await prisma.$disconnect(); 

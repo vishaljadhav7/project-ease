@@ -28,15 +28,11 @@ async function main() {
     "project.json",
     "task.json",
     "team.json",
-    "projectTeam.json",
-    "taskAssignments.json",
-    "uploadedFiles.json",
-    "userComments.json",
+   "projectTeam.json",
+     "userComments.json",
   ];
 
-  
-
-  await deleteAllData(orderedFileNames);
+  // await deleteAllData(orderedFileNames);
 
   for (const fileName of orderedFileNames) {
 

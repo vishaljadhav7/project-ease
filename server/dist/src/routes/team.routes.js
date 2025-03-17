@@ -7,5 +7,5 @@ const express_1 = require("express");
 const team_controller_1 = require("../controllers/team.controller");
 const verifyUser_1 = __importDefault(require("../middlewares/verifyUser"));
 const teamRouter = (0, express_1.Router)();
-teamRouter.get("/", verifyUser_1.default, team_controller_1.getTeams);
+teamRouter.get("/teams", verifyUser_1.default, team_controller_1.getTeams);
 exports.default = teamRouter;

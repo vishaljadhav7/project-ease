@@ -4,6 +4,6 @@ import authMiddleWare from "../middlewares/verifyUser";
 
 const teamRouter = Router();
 
-teamRouter.get("/", authMiddleWare ,getTeams);
+teamRouter.get("/teams", authMiddleWare ,getTeams);
 
 export default teamRouter;

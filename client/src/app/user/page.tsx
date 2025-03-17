@@ -3,9 +3,9 @@
 import React from 'react'
 import Image from 'next/image';
 import { useAppSelector } from '@/Redux/store';
+
 export default function User() {
   const userData = useAppSelector((store) => store.user.userInfo);
-
 
   if (!userData) {
     return (

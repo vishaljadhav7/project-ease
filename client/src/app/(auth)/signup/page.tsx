@@ -14,6 +14,7 @@ const schema = z.object({
   userName : z.string().min(4, {message : "min 8 characters are requierd"}),
   emailId: z.string().email({ message: 'Please enter a valid email address' }),
   password: z.string().min(8, { message: 'Password must be at least 8 characters' }),
+  isAdmin : z.boolean().default(false),
 });
 
 type FormField = z.infer<typeof schema>;
@@ -107,6 +108,22 @@ export default function SignUp() {
             {errors.password && (
               <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
             )}
+          </div>
+          <div>
+            <label
+              htmlFor="admin"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Admin
+            </label>
+             <input 
+             {...register('isAdmin')}
+             type="checkbox" 
+              id="admin"
+             />     
+             {errors.isAdmin && (
+               <p className="mt-1 text-sm text-red-500">{errors.isAdmin.message}</p>
+             )}       
           </div>
           <button
             type="submit"

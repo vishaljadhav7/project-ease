@@ -8,19 +8,14 @@ import { useAppDispatch, useAppSelector } from '@/Redux/store';
 import { RootState } from '@/Redux/store';
 import Link from 'next/link';
 import {
-  AlertCircle,
-  AlertOctagon,
-  AlertTriangle,
   Briefcase,
   ChevronDown,
   ChevronUp,
   Home,
-  Layers3,
   LockIcon,
   LucideIcon,
   Search,
-  Settings,
-  ShieldAlert,
+
   User,
   Users,
   XIcon,
@@ -32,8 +27,8 @@ import { addProjects } from '@/features/data/dataSlice';
 const Sidebar = () => {
   const dispatch = useAppDispatch();
   const { isSidebarCollapsed } = useAppSelector((state: RootState) => state.global);
+  const {userInfo} = useAppSelector((state: RootState) => state.user)
   const [showProjects, setShowProjects] = useState(false);
-  const [showPriority, setShowPriority] = useState(false);
   const { data: projects, isLoading, isError } = useFetchAllProjectsQuery();
 
   useEffect(()=>{
@@ -49,8 +44,8 @@ const Sidebar = () => {
       } overflow-hidden`}
     >
       {/* Top Logo */}
-      <div className="flex items-center justify-between h-16 px-6 bg-gradient-to-r from-orange-400 to-orange-500 shadow-md">
-        <h2 className="text-xl font-bold text-white tracking-tight">ProjectBox</h2>
+      <div className="flex items-center justify-between h-16 px-6 bg-blue-500 shadow-md">
+        <h2 className="text-xl font-bold text-white tracking-tight">Project Ease</h2>
         {!isSidebarCollapsed && (
           <button
             onClick={() => dispatch(toggleSidebarView(true))}
@@ -64,17 +59,17 @@ const Sidebar = () => {
       {/* Team Section */}
       <div className="flex items-center gap-4 px-6 py-4 border-b border-gray-200 bg-gray-50">
         <Image
-          src="/vercel.svg"
+          src={userInfo?.profileAvatarUrl || "/default-avatar.png"}
           width={40}
           height={40}
-          alt="Team Logo"
+          alt={userInfo?.userName || ""}
           className="rounded-full bg-slate-800 p-1"
         />
         <div>
-          <h3 className="text-md font-semibold text-gray-800">ABC Team</h3>
+          <h3 className="text-md font-semibold text-gray-800">{userInfo?.userName}</h3>
           <div className="flex items-center gap-1 mt-1">
             <LockIcon className="h-3 w-3 text-gray-500" />
-            <span className="text-xs text-gray-500">Private</span>
+            <span className="text-xs text-gray-500">{userInfo?.emailId}</span>
           </div>
         </div>
       </div>
@@ -85,7 +80,7 @@ const Sidebar = () => {
         <SidePanelLinks icon={Home} label="Home" href="/home" />
         <SidePanelLinks icon={Search} label="Search" href="/search" />
         <SidePanelLinks icon={User} label="Profile" href="/user" />
-        <SidePanelLinks icon={Users} label="Team" href="/users" />
+        <SidePanelLinks icon={Users} label="Team" href="/teams" />
 
         {/* Projects Section */}
         <button
@@ -117,33 +112,6 @@ const Sidebar = () => {
             ))}
           </div>
         )}
-
-        {/* Priority Section */}
-        <button
-          onClick={() => setShowPriority((prev) => !prev)}
-          className="flex w-full items-center justify-between px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200"
-        >
-          <span className="font-medium">Priority</span>
-          {showPriority ? (
-            <ChevronUp className="h-5 w-5 text-gray-500" />
-          ) : (
-            <ChevronDown className="h-5 w-5 text-gray-500" />
-          )}
-        </button>
-        {showPriority && (
-          <div className="pl-4 space-y-1">
-            <SidePanelLinks icon={AlertCircle} label="Urgent" href="/priority/urgent" />
-            <SidePanelLinks icon={ShieldAlert} label="High" href="/priority/high" />
-            <SidePanelLinks icon={AlertTriangle} label="Medium" href="/priority/medium" />
-            <SidePanelLinks icon={AlertOctagon} label="Low" href="/priority/low" />
-            <SidePanelLinks icon={Layers3} label="Backlog" href="/priority/backlog" />
-          </div>
-        )}
-      </div>
-
-      {/* Settings Link (Optional Footer) */}
-      <div className="border-t border-gray-200 p-4">
-        <SidePanelLinks icon={Settings} label="Settings" href="/settings" />
       </div>
     </div>
   );

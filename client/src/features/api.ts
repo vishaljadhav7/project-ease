@@ -28,19 +28,12 @@ export interface Project {
     id?: string;
     userName : string;
     emailId: string;
-    password: string;
     profileAvatarUrl?: string;
     teamId?: string;
+    isAdmin : boolean
   }
   
-  export interface uploadedFiles {
-    id: string;
-    fileUrl: string;
-    fileName: string;
-    taskId: string;
-    uploadedById: string;
-  }
-  
+
   export interface UserComments{
     id: string;
     comment : string;
@@ -86,8 +79,7 @@ export interface Project {
     reducerPath : "api",
     baseQuery: fetchBaseQuery({
       baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
-      prepareHeaders: (headers, { getState }) => {
-       
+      prepareHeaders: (headers) => {
         const token = localStorage.getItem("token");
         if (token) {
           headers.set("Authorization", `Bearer ${token}`);
@@ -99,6 +91,7 @@ export interface Project {
     }),
     
     tagTypes: ["Projects", "Tasks", "Users", "Teams"],
+    
     endpoints : (build) => ({
 
       fetchAllProjects : build.query<Project[], void>({
@@ -131,13 +124,12 @@ export interface Project {
       fetchAllTasksOfUser : build.query<Task[], {userId : string}>({
          query : ({userId}) => `/tasks/user/${userId}`,
          transformResponse : (results : any) => {
-          console.log(results)
           return results
          },
          providesTags : ((result, error, {userId}) => (
              result
              ? result?.data.map(({ id } : { id: string }) => ({ type: "Tasks", id }))
-             : [{ type: "Tasks", id: userId }] 
+             : [{ type: "Tasks" as const, id: userId }] 
          )),
        }),
 
@@ -148,7 +140,8 @@ export interface Project {
          body : task
         }),     
         invalidatesTags: (result, error, task) => [
-          { type: "Tasks" as const, id: `project-${task.projectId}` }, // Invalidate specific project
+          { type: "Tasks" as const, id: `project-${task.projectId}` }, 
+          { type: "Tasks" as const, id: task.createdById  || task.assignedToId}
         ],
       }),
 
@@ -168,7 +161,7 @@ export interface Project {
           body: taskDetails,
         }),
         transformResponse: (response: any) => {
-          console.log( "(transformResponse from editTask rtk) ====>>>>" , response);
+          // console.log( "(transformResponse from editTask rtk) ====>>>>" , response);
           return response
         },
         invalidatesTags: (result, error, { taskDetails }) => [
@@ -183,6 +176,7 @@ export interface Project {
   
       getTeams: build.query<Team[], void>({
         query: () => "teams",
+        transformResponse: (response: any) => response.data,
         providesTags: ["Teams"],
       }),
 

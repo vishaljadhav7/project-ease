@@ -5,7 +5,7 @@ import userRouter from './routes/user.routes';
 import projectRouter from './routes/project.routes';
 import morgan from "morgan";
 import taskRouter from './routes/task.routes';
-
+import teamRouter from './routes/team.routes';
 const app = express()
 
 app.use(express.json({limit : "16kb"}));
@@ -26,6 +26,6 @@ app.get("/", (req : Request , res : Response) => {
 app.use("/api/v1", userRouter);
 app.use("/api/v1", projectRouter);
 app.use("/api/v1", taskRouter)
-
+app.use("/api/v1", teamRouter)
   
 export {app};  

@@ -10,7 +10,6 @@ const prisma = new PrismaClient();
 
      const userIds = [
       ...new Set([
-        ...teams.map(t => t.productOwnerUserId),
         ...teams.map(t => t.projectManagerUserId),
       ].filter(id => id !== null)),
     ] as string[];
@@ -24,11 +23,12 @@ const prisma = new PrismaClient();
 
     const teamsWithUsernames = teams.map(team => ({
       ...team,
-      productOwnerUsername: team.productOwnerUserId ? userMap.get(team.productOwnerUserId) ?? null : null,
       projectManagerUsername: team.projectManagerUserId ? userMap.get(team.projectManagerUserId) ?? null : null,
     }));
 
     res.status(200).json(new ApiResponse(200, teamsWithUsernames, "teams retrieved successfully"))
+  
+    
 
    } catch (error: any) {
      res

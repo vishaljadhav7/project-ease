@@ -11,6 +11,7 @@ const user_routes_1 = __importDefault(require("./routes/user.routes"));
 const project_routes_1 = __importDefault(require("./routes/project.routes"));
 const morgan_1 = __importDefault(require("morgan"));
 const task_routes_1 = __importDefault(require("./routes/task.routes"));
+const team_routes_1 = __importDefault(require("./routes/team.routes"));
 const app = (0, express_1.default)();
 exports.app = app;
 app.use(express_1.default.json({ limit: "16kb" }));
@@ -27,3 +28,4 @@ app.get("/", (req, res) => {
 app.use("/api/v1", user_routes_1.default);
 app.use("/api/v1", project_routes_1.default);
 app.use("/api/v1", task_routes_1.default);
+app.use("/api/v1", team_routes_1.default);

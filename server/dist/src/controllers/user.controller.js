@@ -144,13 +144,9 @@ const signInUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 exports.signInUser = signInUser;
 const signOut = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const options = {
-            httpOnly: true,
-            secure: true
-        };
-        return res
+        res
             .status(200)
-            .clearCookie("token", options)
+            .clearCookie("token")
             .json(new ApiResponse_1.default(200, {}, "User has logged Out"));
     }
     catch (error) {

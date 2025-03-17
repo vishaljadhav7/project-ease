@@ -6,9 +6,8 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from "recharts";
 import { useAppSelector } from "@/Redux/store";
 import { dataGridClassNames } from "@/lib/utils";
-import { Priority, Task, useFetchAllTasksOfUserQuery } from "@/features/api";
+import { Priority, Project, Task, useFetchAllTasksOfUserQuery } from "@/features/api";
 import NewProjectPopup from "@/components/NewProjectPopup";
-import NewTaskPopup from '@/components/NewTaskPopup';
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 const taskColumns: GridColDef[] = [
@@ -22,16 +21,18 @@ const COLORS = ["#34D399", "#FBBF24", "#60A5FA", "#F87171"]; // Softer, modern c
 
 const Home = () => {
   const projects = useAppSelector((store) => store.data.allProjects);
-  const userId = useAppSelector((store) => store.user.userInfo?.id);
-  const [selectedProjectId, setSelectedProjectId] = useState<string>("");
+  const user = useAppSelector((store) => store.user.userInfo);
+  
+    
   const [isModalNewProjectOpen, setIsModalNewProjectOpen] = useState<boolean>(false);
-  const [showNewTaskModal, setShowNewTaskModal] = useState(false);
+  
+  const { data, isLoading: tasksLoading, isError: tasksError } = useFetchAllTasksOfUserQuery({ userId : user?.id as string });
 
-  const { data, isLoading: tasksLoading, isError: tasksError } = useFetchAllTasksOfUserQuery({ userId });
- const  userdata = useAppSelector((store) => store.user.userInfo)
- console.log("(userdata) =>>>>>> ", userdata)
+  if (tasksLoading) return <LoadingSpinner/>;
+  if (tasksError) return <div className="p-8 text-center text-red-500 text-lg">Error loading data</div>;
+ 
   // No Projects Case
-  if (!projects || projects.length === 0) {
+  if ( user?.isAdmin && (!projects || projects.length === 0)) {
     return (
       <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-6">
         <NewProjectPopup
@@ -56,12 +57,8 @@ const Home = () => {
   }
 
   // Set default project
-  if (!selectedProjectId && projects.length > 0) {
-    setSelectedProjectId(projects[0].id);
-  }
 
-  if (tasksLoading) return <LoadingSpinner/>;
-  if (tasksError) return <div className="p-8 text-center text-red-500 text-lg">Error loading data</div>;
+
 
   const tasks = data?.data || [];
 
@@ -70,23 +67,12 @@ const Home = () => {
   if (tasks.length === 0) {
     return (
       <div className="min-h-screen bg-gray-100 p-6">
-        <NewTaskPopup
-          isOpen={showNewTaskModal}
-          onClose={() => setShowNewTaskModal(false)}
-          id={selectedProjectId}
-        />
         <Header name="Project Management Dashboard" />
         <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-sm p-8 text-center">
           <h3 className="text-2xl font-semibold text-gray-800 mb-4">No Tasks Found</h3>
           <p className="text-gray-600 mb-6 text-lg">
-            Add tasks to your project to get started!
+            Add tasks to your projects to get started!
           </p>
-          <button
-            onClick={() => setShowNewTaskModal(true)}
-            className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-all duration-200 font-medium"
-          >
-            Add New Task
-          </button>
         </div>
       </div>
     );
@@ -103,7 +89,7 @@ const Home = () => {
     value: priorityCount[key],
   }));
 
-  const projectStatus = projects.reduce((acc: { name: string; value: number }[], project) => {
+  const projectStatus = projects.reduce((acc: { name: string; value: number }[], project : Project) => {
     const status = project.endDate ? "Completed" : "Active";
     const existing = acc.find((item) => item.name === status);
     if (existing) existing.value += 1;
@@ -161,25 +147,16 @@ const Home = () => {
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 md:col-span-2">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-gray-800">Your Tasks</h3>
-              <button
-                onClick={() => setShowNewTaskModal(true)}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-all duration-200 text-sm font-medium"
-              >
-                + New Task
-              </button>
+
             </div>
-            <NewTaskPopup
-              isOpen={showNewTaskModal}
-              onClose={() => setShowNewTaskModal(false)}
-              id={selectedProjectId}
-            />
+
             <DataGrid
               rows={tasks}
               columns={taskColumns}
               className={`${dataGridClassNames} border-0`}
-              autoHeight
+          
               disableColumnMenu
-              disableSelectionOnClick
+             
             />
           </div>
         </div>

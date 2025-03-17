@@ -1,12 +1,10 @@
 'use client';
 
 import { Search, LogOut, Menu } from 'lucide-react';
-import Link from 'next/link';
 import { RootState } from '@/Redux/store';
 import { useAppDispatch, useAppSelector } from '@/Redux/store';
 import { toggleSidebarView } from '@/features/status/statusSlice';
 import { removeUser } from '@/features/user/userSlice';
-import axios from 'axios';
 import {useLogoutMutation} from '@/features/api';
 
 const Navbar = () => {

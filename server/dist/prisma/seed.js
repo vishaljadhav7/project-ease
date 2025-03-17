@@ -47,7 +47,7 @@ function main() {
             "uploadedFiles.json",
             "userComments.json",
         ];
-        yield deleteAllData(orderedFileNames);
+        // await deleteAllData(orderedFileNames);
         for (const fileName of orderedFileNames) {
             const filePath = path_1.default.join(dataDirectory, fileName);
             const jsonData = JSON.parse(fs_1.default.readFileSync(filePath, "utf-8"));

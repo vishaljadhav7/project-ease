@@ -30,6 +30,7 @@ const taskStatus: ColumnType[] = [
 
 export default function GridView({ setShowNewTaskModal, tasks }: GridProps) {
   const [updateTask, { isLoading }] = useUpdateTaskMutation();
+  
 
   const moveTask = (taskId: string, toStatus: string) => {
     updateTask({ taskId, status: toStatus });

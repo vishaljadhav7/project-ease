@@ -3,12 +3,15 @@
 import { useState, FormEvent } from "react";
 import PopUp from '@/components/PopUp/index';
 import { useCreateProjectMutation } from "@/features/api";
+import { useAppSelector } from "@/Redux/store";
 interface ProjectFormData {
   projectName: string;
   description: string;
   startDate: Date;
   endDate: Date;
+  projectOwnerId : string
 }
+
 
 interface Props {
   isOpen: boolean;
@@ -17,13 +20,14 @@ interface Props {
 
 export default function NewProjectPopup({ isOpen, onClose }: Props) {
   const [createProject, { isLoading }] = useCreateProjectMutation();
-
+  const user = useAppSelector(store => store.user.userInfo)
  
   const [formData, setFormData] = useState<ProjectFormData>({
     projectName: "",
     description: "",
     startDate: new Date(),
     endDate: new Date(),
+    projectOwnerId : user?.id as string
   });
 
 
@@ -34,7 +38,8 @@ export default function NewProjectPopup({ isOpen, onClose }: Props) {
       formData.startDate instanceof Date &&
       !isNaN(formData.startDate.getTime()) &&
       formData.endDate instanceof Date &&
-      !isNaN(formData.endDate.getTime())
+      !isNaN(formData.endDate.getTime())&&
+      user?.id
     );
   };
 
@@ -63,6 +68,7 @@ export default function NewProjectPopup({ isOpen, onClose }: Props) {
         description: "",
         startDate: new Date(),
         endDate: new Date(),
+        projectOwnerId : ""
       });
       onClose(); 
     } catch (error) {
@@ -99,6 +105,20 @@ export default function NewProjectPopup({ isOpen, onClose }: Props) {
             onChange={(e) => handleInputChange('description', e.target.value)}
           />
         </div>
+
+        <div>
+          <label htmlFor="projectOwnerId">Project Owner Id</label>
+          <input
+            type="text"
+            className={inputStyles}
+            name="projectOwnerId"
+            id="projectOwnerId"
+            placeholder="Project Name"
+            value={formData.projectOwnerId}
+            disabled
+          />
+        </div>
+
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-2">
           <input
