@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Header from '@/components/Header';
 import NewProjectPopup from '@/components/NewProjectPopup/index';
 import { Grid3x3, Table } from 'lucide-react';
 import { useAppSelector } from '@/Redux/store';

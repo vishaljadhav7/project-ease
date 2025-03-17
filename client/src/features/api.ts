@@ -58,7 +58,6 @@ export interface Project {
     createdTask?: User;
     assignedTo?: User;
     userComments?: UserComments[];
-    attachments?: uploadedFiles[];
   }
   
   export interface SearchResults {
