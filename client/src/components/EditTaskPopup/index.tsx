@@ -15,7 +15,7 @@ interface Props {
 export default function EditTaskPopup({ isOpen, onClose, taskDetails }: Props) {
   const userId = useAppSelector((store) => store.user.userInfo?.id);
 
-  const [editTask, { isLoading, error }] = useEditTaskMutation();
+  const [editTask, { isLoading }] = useEditTaskMutation();
   const [formData, setFormData] = useState<Partial<Task>>({ ...taskDetails });
   const [formError, setFormError] = useState<string | null>(null);
 

@@ -21,7 +21,7 @@ const columns: GridColDef[] = [
 
 export default function TeamsPage() {
  
-  const {data, isLoading, isError} = useGetTeamsQuery() ;
+  const {data, isLoading, isError} = useGetTeamsQuery({userId : ""}) ;
   
   if(isLoading) return <LoadingSpinner/>
   if (isError || !data) return <div>Error fetching teams</div>;

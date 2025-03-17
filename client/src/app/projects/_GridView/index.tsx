@@ -1,7 +1,8 @@
+
 'use client';
 
-import React, { useState } from 'react';
-import { DndProvider, useDrag, useDrop } from 'react-dnd';
+import React, { useState, useRef } from 'react';
+import { DndProvider, useDrag, useDrop, DropTargetMonitor, DragSourceMonitor } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Task as TaskType } from '@/features/api';
 import { EllipsisVertical, MessageSquareMore, Plus } from 'lucide-react';
@@ -30,7 +31,6 @@ const taskStatus: ColumnType[] = [
 
 export default function GridView({ setShowNewTaskModal, tasks }: GridProps) {
   const [updateTask, { isLoading }] = useUpdateTaskMutation();
-  
 
   const moveTask = (taskId: string, toStatus: string) => {
     updateTask({ taskId, status: toStatus });
@@ -64,26 +64,31 @@ type TaskPanelProps = {
 };
 
 const TaskPanel = ({ status, tasks, moveTask, setShowNewTaskModal }: TaskPanelProps) => {
-  const [{ isOver }, drop] = useDrop(() => ({
+  const dropRef = useRef<HTMLDivElement>(null); // Standard ref for the DOM element
+
+  const [{ isOver }, drop] = useDrop({
     accept: 'task',
     drop: (item: { id: string }) => moveTask(item.id, status),
-    collect: (monitor) => ({
+    collect: (monitor: DropTargetMonitor) => ({
       isOver: !!monitor.isOver(),
     }),
-  }));
+  });
+
+  // Connect the drop target to the DOM ref
+  drop(dropRef);
 
   const tasksCount = tasks.filter((task) => task.status === status).length;
 
   const statusColors: Record<string, string> = {
-    To_Do: '#3B82F6', // Softer Blue
-    In_Progress: '#10B981', // Softer Green
-    Under_Review: '#F59E0B', // Softer Amber
-    Completed: '#6B7280', // Softer Gray
+    To_Do: '#3B82F6',
+    In_Progress: '#10B981',
+    Under_Review: '#F59E0B',
+    Completed: '#6B7280',
   };
 
   return (
     <div
-      ref={drop}
+      ref={dropRef} // Use the standard ref here
       className={`rounded-xl bg-white shadow-sm border border-gray-200 p-4 transition-all duration-300 ${
         isOver ? 'bg-gray-50 shadow-md' : ''
       }`}
@@ -91,7 +96,7 @@ const TaskPanel = ({ status, tasks, moveTask, setShowNewTaskModal }: TaskPanelPr
       {/* Header */}
       <div
         className="flex items-center justify-between p-2 rounded-md mb-4"
-        style={{ backgroundColor: `${statusColors[status]}10` }} // 10% opacity for subtlety
+        style={{ backgroundColor: `${statusColors[status]}10` }}
       >
         <h3 className="text-md font-semibold text-gray-800 flex items-center gap-2">
           {status.replace('_', ' ')}
@@ -99,7 +104,7 @@ const TaskPanel = ({ status, tasks, moveTask, setShowNewTaskModal }: TaskPanelPr
             {tasksCount}
           </span>
         </h3>
-        <div className="flex items-center gap-2"> 
+        <div className="flex items-center gap-2">
           <button
             className="p-1 bg-white rounded-md text-gray-700 hover:bg-gray-100 transition-colors shadow-sm"
             onClick={() => setShowNewTaskModal(true)}
@@ -128,14 +133,18 @@ type TaskProps = {
 const Task = ({ task }: TaskProps) => {
   const [taskControls, setTaskControls] = useState<boolean>(false);
   const [showEditTask, setShowEditTask] = useState(false);
+  const dragRef = useRef<HTMLDivElement>(null); // Standard ref for the DOM element
 
-  const [{ isDragging }, drag] = useDrag(() => ({
+  const [{ isDragging }, drag] = useDrag({
     type: 'task',
     item: { id: task.id },
-    collect: (monitor) => ({
+    collect: (monitor: DragSourceMonitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
-  }));
+  });
+
+  // Connect the drag source to the DOM ref
+  drag(dragRef);
 
   const taskTagsSplit = task.tags ? task.tags.split(',') : [];
   const formattedStartDate = task.startDate ? format(new Date(task.startDate), 'MMM dd') : '';
@@ -162,7 +171,7 @@ const Task = ({ task }: TaskProps) => {
 
   return (
     <div
-      ref={drag}
+      ref={dragRef} // Use the standard ref here
       className={`relative rounded-md bg-white border border-gray-200 p-3 transition-all duration-300 ${
         isDragging ? 'opacity-50 scale-95' : 'opacity-100 hover:shadow-md'
       }`}
@@ -185,17 +194,6 @@ const Task = ({ task }: TaskProps) => {
             Delete
           </li>
         </ul>
-      )}
-
-      {/* Task Attachment */}
-      {task.attachments && task.attachments.length > 0 && (
-        <Image
-          src={task.attachments[0].fileUrl}
-          alt={task.attachments[0].fileName}
-          width={400}
-          height={200}
-          className="w-full h-28 object-cover rounded-md mb-3"
-        />
       )}
 
       {/* Task Content */}

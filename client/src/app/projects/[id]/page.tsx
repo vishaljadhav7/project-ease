@@ -38,10 +38,10 @@ const Project = ({ params }: { params: Promise<{ id: string }> }) => {
       {/* Content */}
       <div className="p-6">
         {currentTab === "Grid" && (
-          <GridView setShowNewTaskModal={setShowNewTaskModal} tasks={data?.data.tasks || []} />
+          <GridView setShowNewTaskModal={setShowNewTaskModal} tasks={data || []} />
         )}
         {currentTab === "Table" && (
-          <TableView setShowNewTaskModal={setShowNewTaskModal} tasks={data?.data.tasks || []} />
+          <TableView setShowNewTaskModal={setShowNewTaskModal} tasks={data || []} />
         )}
       </div>
     </div>

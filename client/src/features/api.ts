@@ -69,8 +69,7 @@ export interface Project {
   export interface Team {
     teamId: string;
     teamName: string;
-    productOwnerUserId?: string;
-    projectManagerUserId?: string;
+    projectManagerUserId: string;
   }
   
 
@@ -108,40 +107,42 @@ export interface Project {
        invalidatesTags : ["Projects"],
       }),
 
-      fetchAllTasks : build.query<Task[], {projectId : string}>({
-        query : ({projectId}) => `tasks?projectId=${projectId}`,
-        providesTags: (result, error, { projectId }) =>
-          result
+      fetchAllTasks: build.query<Task[], { projectId: string }>({
+        query: ({ projectId }) => `tasks?projectId=${projectId}`,
+        transformResponse: (res: { data: { tasks: Task[] } }) => {
+          console.log('Raw response:', res);
+          return res.data.tasks;
+        },
+        providesTags: (result, error, { projectId }) => {
+         // console.log('Transformed result:', result, typeof result);
+          return result
             ? [
-                ...result.data.tasks.map(({ id }: { id: string }) => ({ type: "Tasks" as const, id })),
-                { type: "Tasks" as const, id: `project-${projectId}` }, // Project-specific tag
+                ...result.map(({ id }) => ({ type: 'Tasks' as const, id })),
+                { type: 'Tasks' as const, id: `project-${projectId}` },
               ]
-            : [{ type: "Tasks" as const, id: `project-${projectId}` }],
-       
-       }),   
+            : [{ type: 'Tasks' as const, id: `project-${projectId}` }];
+        },
+      }),
 
-      fetchAllTasksOfUser : build.query<Task[], {userId : string}>({
+      fetchAllTasksOfUser : build.query({
          query : ({userId}) => `/tasks/user/${userId}`,
-         transformResponse : (results : any) => {
-          return results
-         },
-         providesTags : ((result, error, {userId}) => (
-             result
-             ? result?.data.map(({ id } : { id: string }) => ({ type: "Tasks", id }))
-             : [{ type: "Tasks" as const, id: userId }] 
-         )),
+         transformResponse : (results : {data : Task[]}) => results.data,
+        
        }),
 
-      createTask : build.mutation<Task, Partial<Task>>({
-        query : (task) => ({
-         url : "/create-task",
-         method : "POST",
-         body : task
-        }),     
-        invalidatesTags: (result, error, task) => [
-          { type: "Tasks" as const, id: `project-${task.projectId}` }, 
-          { type: "Tasks" as const, id: task.createdById  || task.assignedToId}
-        ],
+       createTask: build.mutation<Task, Partial<Task> & { projectId: string }>({
+        query: (task) => ({
+          url: '/create-task',
+          method: 'POST',
+          body: task,
+        }),
+        invalidatesTags: (result, error, task) => {
+          // console.log('task, result from createTask RTK:', task, result);
+          return [
+            { type: 'Tasks' as const, id: `project-${task.projectId}` },
+            { type: 'Tasks' as const, id: task.createdById || task.assignedToId || 'unknown' },
+          ];
+        },
       }),
 
       updateTask : build.mutation<Task, {taskId : string, status : string}>({
@@ -159,10 +160,6 @@ export interface Project {
           method: "PATCH",
           body: taskDetails,
         }),
-        transformResponse: (response: any) => {
-          // console.log( "(transformResponse from editTask rtk) ====>>>>" , response);
-          return response
-        },
         invalidatesTags: (result, error, { taskDetails }) => [
           { type: "Tasks" as const, id: `project-${taskDetails.projectId}` },
         ],
@@ -173,9 +170,11 @@ export interface Project {
        providesTags: ["Users"] ,
       }),
   
-      getTeams: build.query<Team[], void>({
+      getTeams: build.query({
         query: () => "teams",
-        transformResponse: (response: any) => response.data,
+        transformResponse: (response: {data : Team[]}) => {
+          return response.data
+        },
         providesTags: ["Teams"],
       }),
 

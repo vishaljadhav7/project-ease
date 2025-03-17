@@ -26,7 +26,7 @@ const Home = () => {
     
   const [isModalNewProjectOpen, setIsModalNewProjectOpen] = useState<boolean>(false);
   
-  const { data, isLoading: tasksLoading, isError: tasksError } = useFetchAllTasksOfUserQuery({ userId : user?.id as string });
+  const { data  , isLoading: tasksLoading, isError: tasksError } = useFetchAllTasksOfUserQuery({ userId : user?.id as string });
 
   if (tasksLoading) return <LoadingSpinner/>;
   if (tasksError) return <div className="p-8 text-center text-red-500 text-lg">Error loading data</div>;
@@ -60,7 +60,7 @@ const Home = () => {
 
 
 
-  const tasks = data?.data || [];
+  const tasks = data || [];
 
   // No Tasks Case
 
