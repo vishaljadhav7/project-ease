@@ -50,7 +50,7 @@ export default function EditTaskPopup({ isOpen, onClose, taskDetails }: Props) {
     ) as Partial<Task>;
 
     try {
-      console.log("Submitting:", { taskId: taskDetails.id, taskDetails: payload });
+   
       await editTask({
         taskId: taskDetails.id,
         taskDetails: payload,

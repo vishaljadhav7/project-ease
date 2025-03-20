@@ -13,7 +13,7 @@ async function deleteAllData(orderedFileNames: string[]) {
     const model: any = prisma[modelName as keyof typeof prisma];
     try {
       await model.deleteMany({});
-      console.log(`Cleared data from ${modelName}`);
+      // console.log(`Cleared data from ${modelName}`);
     } catch (error : any) {
       console.error(`Error clearing data from ${modelName}:`, error.message);
     }
@@ -28,8 +28,8 @@ async function main() {
     "project.json",
     "task.json",
     "team.json",
-   "projectTeam.json",
-     "userComments.json",
+    "projectTeam.json",
+    "userComments.json",
   ];
 
   // await deleteAllData(orderedFileNames);

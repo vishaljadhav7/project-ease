@@ -26,17 +26,17 @@ enum Status {
 
 
 interface taskRequirements {
-    taskName : string;
-    description : string;
-    status : Status;
-    priority : Priority;
-    tags? : string;
-    startDate : Date;
-    dueDate : Date;
-    points? : number;
-    projectId : string;
-    createdById: string;
-    assignedToId : string;
+  taskName : string;
+  description : string;
+  status : Status;
+  priority : Priority;
+  tags? : string;
+  startDate : Date;
+  dueDate : Date;
+  points? : number;
+  projectId : string;
+  createdById: string;
+  assignedToId : string;
 }
 
 export const fetchAllTasks =  async (req: Request<{},{},{}, projectRef>, res: Response): Promise<void> => {
