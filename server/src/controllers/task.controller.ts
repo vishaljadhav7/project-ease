@@ -39,6 +39,8 @@ interface taskRequirements {
   assignedToId : string;
 }
 
+
+
 export const fetchAllTasks =  async (req: Request<{},{},{}, projectRef>, res: Response): Promise<void> => {
   try {
     const {projectId} = req.query;
@@ -171,7 +173,7 @@ export const editTask = async (req: Request<{taskId : string}, {}, Partial<Task>
         id: taskId,
       },
       data: {
-        ...editDetails
+        ...editDetails 
       },
     })
 
