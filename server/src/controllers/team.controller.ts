@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { PrismaClient, Team, User } from "@prisma/client";
+import { PrismaClient, Team } from "@prisma/client";
 import ApiResponse from "../utils/ApiResponse";
 
 const prisma = new PrismaClient();
