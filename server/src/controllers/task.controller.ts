@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { PrismaClient, Task } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import ApiResponse from "../utils/ApiResponse";
 import ApiError from "../utils/ApiError";
 // import { Status, Priority } from "@prisma/client";
@@ -39,6 +39,21 @@ interface taskRequirements {
   assignedToId : string;
 }
 
+
+type Task = {
+  id: string;
+  taskName: string;
+  description: string | null;
+  status: Status ;
+  priority: Priority ;
+  tags: string | null;
+  projectId: string;
+  startDate : Date;
+  dueDate : Date;
+  points? : number;
+  createdById: string;
+  assignedToId : string;
+}
 
 
 export const fetchAllTasks =  async (req: Request<{},{},{}, projectRef>, res: Response): Promise<void> => {
