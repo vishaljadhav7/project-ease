@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { PrismaClient, Team } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import ApiResponse from "../utils/ApiResponse";
 
 const prisma = new PrismaClient();
@@ -10,6 +10,12 @@ type  IteamsWithUsernames = {
   projectManagerUserId: string | null;
   projectManagerUsername: string | null
 } 
+
+type Team = {
+  id: string;
+  teamName: string;
+  projectManagerUserId: string | null;
+}
 
  export const getTeams = async (req: Request, res: Response): Promise<void> => {
    try {
