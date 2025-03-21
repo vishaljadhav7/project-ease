@@ -24,12 +24,12 @@ async function main() {
   const dataDirectory = path.join(__dirname, "seedData3");
 
   const orderedFileNames = [
-    "user.json",
-    "project.json",
-    "task.json",
-    "team.json",
-    "projectTeam.json",
-    "userComments.json",
+    // "user.json",
+   //  "project.json",
+   //  "task.json",
+   //  "team.json",
+  //   "projectTeam.json",
+     "userComments.json",
   ];
 
   // await deleteAllData(orderedFileNames);
@@ -43,9 +43,11 @@ async function main() {
     // console.log("modelName => ", modelName)
 
     try {
-      for (const data of jsonData) {
-          await model.create({ data });
-      }
+      await model.createMany({
+        data: jsonData,
+        skipDuplicates: true, // Optional: skip duplicate entries
+      });
+
       console.log(`Seeded ${modelName} with data from ${fileName}`);
     } catch (error : any) {
       console.error(`Error seeding data for ${modelName}:`, error.message);

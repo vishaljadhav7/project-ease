@@ -14,7 +14,8 @@ app.use(express.urlencoded({extended : true, limit : "16kb"}));
 
 app.use(cors({
    origin : ['http://localhost:3000' ,'https://project-ease-three.vercel.app'],
-   methods : ["GET", "POST", "DELETE", "PATCH"] 
+   methods : ["GET", "POST", "DELETE", "PATCH"],
+   credentials : true 
 }));
 app.use(morgan("common"));
 

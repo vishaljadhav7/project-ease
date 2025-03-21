@@ -67,9 +67,10 @@ export const fetchUser = async (req : Request, res : Response) => {
       } 
       
       res.status(201).json(new ApiResponse(201, {}, "user retrieved successfully"))
-
+     return
     } catch (error : any) {
-      res.status(401).json(new ApiError(401, error.message));
+       res.status(401).json(new ApiError(401, error.message));
+       return
     } finally {
       await prisma.$disconnect(); 
     }
@@ -108,9 +109,10 @@ export const registerUser = async (req : Request<{}, {}, RegisterUserBody>, res 
       const serverResponse = new ApiResponse(200, newUser, "user registered successfully");
 
       res.status(201).json({serverResponse, "token" : token} ).cookie("token" , token, options);
-
+      return 
     } catch (error : any) {
       res.status(400).json(new ApiError(400, error.message));
+      return 
     } finally {
       await prisma.$disconnect(); 
     }
@@ -149,10 +151,14 @@ export const signInUser = async (req : Request<{}, {}, {emailId : string, passwo
       .status(200)
       .cookie("token", token, options)
       .json({ serverResponse, token });
+    
+    return
 
   } catch (error : any) {
- 
+    
     res.status(400).json(new ApiError(400, error.message));
+    
+    return
   } finally {
     await prisma.$disconnect(); 
   }
@@ -164,7 +170,10 @@ export const signOut = async (req : Request, res : Response) => {
      .status(200)
      .clearCookie("token")
      .json(new ApiResponse(200, {}, "User has logged Out"))
+     return
+     
   } catch (error : any) {
-    res.status(400).json(new ApiError(400, error.message));
+     res.status(400).json(new ApiError(400, error.message));
+     return
   }
 }

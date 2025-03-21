@@ -38,7 +38,11 @@ export default function SignIn() {
 
   const onSubmit: SubmitHandler<FormField> = async (data) => {
     try {
-      const res = await axios.post('http://localhost:4000/api/v1/signin', data);
+      const res = await axios.post( `${process.env.NEXT_PUBLIC_API_BASE_URL}/signin`, data , {
+        withCredentials : true
+      });
+
+      
       dispactch(addUser(res.data.serverResponse.data));
       localStorage.setItem('token',res.data.token);
       router.push("/home");

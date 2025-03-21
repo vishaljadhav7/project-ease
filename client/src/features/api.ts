@@ -77,6 +77,7 @@ export interface Project {
     reducerPath : "api",
     baseQuery: fetchBaseQuery({
       baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
+      credentials : "include",
       prepareHeaders: (headers) => {
         const token = localStorage.getItem("token");
         if (token) {
