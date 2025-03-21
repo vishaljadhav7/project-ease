@@ -90,7 +90,7 @@ export const createTask = async (req: Request<{}, {}, taskRequirements>, res: Re
       }         
      });
 
-     const found_Ids = usersIdExist.map(user => user.id);
+     const found_Ids = usersIdExist.map((user : {id : string}) => user.id);
      const bothExist = found_Ids.includes(createdById) && found_Ids.includes(assignedToId);
 
      if(!bothExist){
