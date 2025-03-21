@@ -113,22 +113,23 @@ export default function SignUp() {
               <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
             )}
           </div>
-          <div>
-            <label
-              htmlFor="admin"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Admin
-            </label>
-             <input 
+          <div className="flex items-center gap-2">
+           <label
+             htmlFor="admin"
+             className="text-sm font-medium text-gray-700"
+           >
+             Admin
+           </label>
+           <input
              {...register('isAdmin')}
-             type="checkbox" 
-              id="admin"
-             />     
-             {errors.isAdmin && (
-               <p className="mt-1 text-sm text-red-500">{errors.isAdmin.message}</p>
-             )}       
-          </div>
+             type="checkbox"
+             id="admin"
+             className="h-4 w-4 text-teal-500 focus:ring-teal-400 border-gray-300 rounded cursor-pointer"
+           />
+           {errors.isAdmin && (
+             <p className="text-sm text-red-500">{errors.isAdmin.message}</p>
+           )}
+         </div>
           <button
             type="submit"
             disabled = {isSubmitting}
